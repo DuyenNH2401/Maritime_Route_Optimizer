@@ -40,6 +40,11 @@ CUSTOM_CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
+/* ── Hide Streamlit Defaults ── */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
 /* ── Global ── */
 html, body, [class*="st-"] {
     font-family: 'Inter', sans-serif;
@@ -64,21 +69,21 @@ section[data-testid="stSidebar"] label {
     letter-spacing: 0.02em;
 }
 
-/* ── KPI Cards ── */
-.kpi-card {
+/* ── Metrics Cards UI (st.metric) ── */
+[data-testid="stMetric"] {
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.85));
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(66, 135, 245, 0.2);
     border-radius: 16px;
-    padding: 24px 20px;
-    text-align: center;
+    padding: 20px 24px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
+    margin-bottom: 20px;
 }
-.kpi-card::before {
+[data-testid="stMetric"]::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
@@ -86,45 +91,39 @@ section[data-testid="stSidebar"] label {
     background: linear-gradient(90deg, #4287f5, #42d4f5, #42f5a7);
     border-radius: 16px 16px 0 0;
 }
-.kpi-card:hover {
+[data-testid="stMetric"]:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 40px rgba(66, 135, 245, 0.25);
     border-color: rgba(66, 135, 245, 0.45);
 }
-.kpi-icon { font-size: 28px; margin-bottom: 6px; }
-.kpi-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #64748b;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-.kpi-value {
-    font-size: 28px;
-    font-weight: 800;
+[data-testid="stMetricValue"] {
+    font-size: 28px !important;
+    font-weight: 800 !important;
     background: linear-gradient(135deg, #60a5fa, #34d399);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-.kpi-sub {
-    font-size: 12px;
-    color: #475569;
-    margin-top: 4px;
-    font-weight: 400;
+[data-testid="stMetricLabel"] {
+    font-size: 13px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #94a3b8 !important;
+    font-weight: 600 !important;
 }
 
-/* ── Shortest route card  accent ── */
-.kpi-shortest::before {
-    background: linear-gradient(90deg, #f97316, #ef4444, #f97316);
+/* ── Tabs & Expanders ── */
+div[data-testid="stExpander"] {
+    background: rgba(30, 41, 59, 0.5) !important;
+    border: 1px solid rgba(66, 135, 245, 0.2) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
 }
-.kpi-shortest .kpi-value {
-    background: linear-gradient(135deg, #fb923c, #f87171);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+div[data-testid="stTabs"] button {
+    font-size: 16px !important;
+    font-weight: 600 !important;
 }
 
-/* ── Route comparison panel ── */
+/* ── Container Card ── */
 .route-compare {
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
     backdrop-filter: blur(16px);
@@ -175,49 +174,6 @@ div.stButton > button:hover {
     background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
     box-shadow: 0 6px 24px rgba(37, 99, 235, 0.5) !important;
     transform: translateY(-1px);
-}
-
-/* ── Risk badge ── */
-.risk-low {
-    display: inline-block;
-    background: rgba(34, 197, 94, 0.15);
-    color: #4ade80;
-    padding: 4px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-}
-.risk-medium {
-    display: inline-block;
-    background: rgba(250, 204, 21, 0.15);
-    color: #fbbf24;
-    padding: 4px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-}
-.risk-high {
-    display: inline-block;
-    background: rgba(239, 68, 68, 0.15);
-    color: #f87171;
-    padding: 4px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-}
-
-/* ── Info boxes ── */
-.info-box {
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.8));
-    border-left: 4px solid #3b82f6;
-    border-radius: 0 12px 12px 0;
-    padding: 16px 20px;
-    margin: 10px 0;
-    color: #94a3b8;
-    font-size: 14px;
 }
 
 /* ── Map container ── */
@@ -719,6 +675,7 @@ def render_map(
 # =============================================================================
 # 6. HELPER FUNCTIONS – UI COMPONENTS
 # =============================================================================
+# (Removed text-heavy UI functions in favor of native metrics/tabs/expanders)
 def risk_badge(score: float, max_score: float = 500) -> str:
     """Return an HTML risk badge (low / medium / high) based on score."""
     ratio = score / max(max_score, 1)
@@ -729,18 +686,6 @@ def risk_badge(score: float, max_score: float = 500) -> str:
     else:
         return f'<span class="risk-high">● HIGH RISK</span>'
 
-
-def kpi_card(icon: str, label: str, value: str, sub: str = "", variant: str = "") -> str:
-    """Return HTML for a single glassmorphism KPI card."""
-    cls = f"kpi-card {variant}"
-    return f"""
-    <div class="{cls}">
-        <div class="kpi-icon">{icon}</div>
-        <div class="kpi-label">{label}</div>
-        <div class="kpi-value">{value}</div>
-        <div class="kpi-sub">{sub}</div>
-    </div>
-    """
 
 
 def segment_table_html(segments: List[dict]) -> str:
@@ -801,37 +746,37 @@ with st.sidebar:
     target_node = DESTINATIONS[target_selection]
 
     st.divider()
-    st.markdown("#### 📦 Vessel & Cargo Parameters")
-    cargo_weight = st.number_input(
-        "Cargo Weight (tons)",
-        min_value=100,
-        max_value=500_000,
-        value=25_000,
-        step=1_000,
-        help="Total weight of cargo in metric tons.",
-    )
-    vessel_length = st.number_input(
-        "Vessel / Cargo Length (m)",
-        min_value=30,
-        max_value=400,
-        value=180,
-        step=10,
-        help="Length overall (LOA) of the vessel in meters.",
-    )
-    cargo_type = st.selectbox(
-        "Cargo Type",
-        list(CARGO_RISK_MULTIPLIERS.keys()),
-        index=2,
-        help="Select the primary cargo classification.",
-    )
+    with st.expander("📦 Vessel & Cargo Parameters", expanded=True):
+        cargo_weight = st.number_input(
+            "Cargo Weight (tons)",
+            min_value=100,
+            max_value=500_000,
+            value=25_000,
+            step=1_000,
+            help="Total weight of cargo in metric tons.",
+        )
+        vessel_length = st.number_input(
+            "Vessel / Cargo Length (m)",
+            min_value=30,
+            max_value=400,
+            value=180,
+            step=10,
+            help="Length overall (LOA) of the vessel in meters.",
+        )
+        cargo_type = st.selectbox(
+            "Cargo Type",
+            list(CARGO_RISK_MULTIPLIERS.keys()),
+            index=2,
+            help="Select the primary cargo classification.",
+        )
 
     st.divider()
-    st.markdown("#### ⚙️ Risk Weight Tuning")
-    st.caption("Adjust how much each risk factor influences route selection.")
-    # These sliders let the user fine-tune (advanced mode)
-    piracy_weight = st.slider("Piracy Sensitivity", 0.0, 2.0, 1.0, 0.1)
-    conflict_weight = st.slider("Conflict Zone Sensitivity", 0.0, 2.0, 1.0, 0.1)
-    weather_weight = st.slider("Bad Weather Sensitivity", 0.0, 2.0, 1.0, 0.1)
+    with st.expander("⚙️ Risk Weight Tuning"):
+        st.caption("Adjust how much each risk factor influences route selection.")
+        # These sliders let the user fine-tune (advanced mode)
+        piracy_weight = st.slider("Piracy Sensitivity", 0.0, 2.0, 1.0, 0.1)
+        conflict_weight = st.slider("Conflict Zone Sensitivity", 0.0, 2.0, 1.0, 0.1)
+        weather_weight = st.slider("Bad Weather Sensitivity", 0.0, 2.0, 1.0, 0.1)
 
     st.divider()
     run_btn = st.button("🧭  Find Optimal Route", type="primary", use_container_width=True)
@@ -901,6 +846,17 @@ if run_btn:
         )
         st.stop()
 
+    # ── Compute Shortest Risk correctly for comparisons ──
+    G_dist_check, G_risk_check = build_maritime_graph(cargo_weight, vessel_length, cargo_type)
+    shortest_risk_on_risk_graph = 0.0
+    for i in range(len(shortest_route.path) - 1):
+        edge = G_risk_check.edges.get((shortest_route.path[i], shortest_route.path[i + 1]), {})
+        shortest_risk_on_risk_graph += edge.get("risk_score", 0)
+        
+    risk_diff = shortest_risk_on_risk_graph - safest_route.total_risk_score if shortest_risk_on_risk_graph > safest_route.total_risk_score else 0
+    dist_diff = safest_route.total_distance - shortest_route.total_distance
+    pct_longer = (dist_diff / max(shortest_route.total_distance, 1)) * 100
+
     # ── KPI Row ──
     st.markdown("---")
     st.markdown(
@@ -911,195 +867,119 @@ if run_btn:
 
     k1, k2, k3, k4 = st.columns(4)
     with k1:
-        st.markdown(
-            kpi_card(
-                "🟢", "Safest Route Distance",
-                f"{safest_route.total_distance:,.0f} nm",
-                f"{safest_route.total_distance * 1.852:,.0f} km",
-            ),
-            unsafe_allow_html=True,
+        st.metric(
+            label="🟢 Safest Distance", 
+            value=f"{safest_route.total_distance:,.0f} nm",
+            delta=f"{dist_diff:,.0f} nm longer",
+            delta_color="inverse" if dist_diff > 0 else "off"
         )
     with k2:
-        st.markdown(
-            kpi_card(
-                "🛡️", "Safest Risk Score",
-                f"{safest_route.total_risk_score:,.0f}",
-                risk_badge(safest_route.total_risk_score, shortest_route.total_risk_score + 1),
-            ),
-            unsafe_allow_html=True,
+        st.metric(
+            label="🛡️ Safest Risk Score", 
+            value=f"{safest_route.total_risk_score:,.0f}",
+            delta=f"- {risk_diff:,.0f} risk pts",
+            delta_color="normal"
         )
     with k3:
-        st.markdown(
-            kpi_card(
-                "🔴", "Shortest Route Distance",
-                f"{shortest_route.total_distance:,.0f} nm",
-                f"{shortest_route.total_distance * 1.852:,.0f} km",
-                variant="kpi-shortest",
-            ),
-            unsafe_allow_html=True,
+        st.metric(
+            label="🔴 Shortest Distance", 
+            value=f"{shortest_route.total_distance:,.0f} nm"
         )
     with k4:
-        # Distance trade-off
-        dist_diff = safest_route.total_distance - shortest_route.total_distance
-        risk_diff = shortest_route.total_risk_score - safest_route.total_risk_score if shortest_route.total_risk_score > 0 else 0
-        pct_longer = (dist_diff / max(shortest_route.total_distance, 1)) * 100
+        st.metric(
+            label="⚠️ Shortest Risk Score", 
+            value=f"{shortest_risk_on_risk_graph:,.0f}"
+        )
+
+    st.markdown("---")
+
+    # ── TABS ──
+    tab_map, tab_compare, tab_ai = st.tabs([
+        "🗺️ Interactive View", 
+        "📋 Route Details", 
+        "💡 Recommendations & Export"
+    ])
+
+    with tab_map:
         st.markdown(
-            kpi_card(
-                "⚖️", "Trade-off Analysis",
-                f"+{pct_longer:.1f}% dist",
-                f"Saves {risk_diff:,.0f} risk pts",
-            ),
+            "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:2px;'>"
+            "🗺️&ensp;Interactive Route Map</h3>",
             unsafe_allow_html=True,
         )
-
-    # ── Interactive Map ──
-    st.markdown("")
-    st.markdown(
-        "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:2px;'>"
-        "🗺️&ensp;Interactive Route Map</h3>",
-        unsafe_allow_html=True,
-    )
-    st.caption(
-        "Red dashed = Shortest Distance  ·  Green solid = Safest Optimal  ·  "
-        "Click markers for details"
-    )
-    route_map = render_map(shortest_route, safest_route, target_node)
-    st.markdown('<div class="map-container">', unsafe_allow_html=True)
-    components.html(route_map._repr_html_(), height=520)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    # ── Route Comparison ──
-    st.markdown("")
-    st.markdown(
-        "<h3 style='color:#e2e8f0;font-weight:700;'>"
-        "📋&ensp;Route Comparison Detail</h3>",
-        unsafe_allow_html=True,
-    )
-
-    col_safe, col_short = st.columns(2)
-
-    with col_safe:
-        st.markdown(
-            '<div class="route-compare">'
-            '<h3>🟢 Safest Optimal Route</h3>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            f"**Waypoints:** {' → '.join(wp.name for wp in safest_route.waypoints)}"
-        )
-        st.markdown(
-            f"**Total Distance:** {safest_route.total_distance:,.1f} nm "
-            f"({safest_route.total_distance * 1.852:,.1f} km)"
-        )
-        st.markdown(f"**Risk Score:** {safest_route.total_risk_score:,.1f}")
-        # Estimated transit time (assuming average 14 knots)
-        eta_safe = safest_route.total_distance / 14
-        st.markdown(f"**Est. Transit Time:** {eta_safe:,.1f} hours ({eta_safe / 24:,.1f} days) @ 14 kn")
-        st.markdown("**Segment Breakdown:**")
-        st.markdown(segment_table_html(safest_route.segment_details), unsafe_allow_html=True)
+        st.caption("Red dashed = Shortest Distance  ·  Green solid = Safest Optimal  ·  Click markers for details")
+        route_map = render_map(shortest_route, safest_route, target_node)
+        st.markdown('<div class="map-container">', unsafe_allow_html=True)
+        components.html(route_map._repr_html_(), height=520)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    with col_short:
-        st.markdown(
-            '<div class="route-compare">'
-            '<h3>🔴 Shortest Distance Route</h3>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            f"**Waypoints:** {' → '.join(wp.name for wp in shortest_route.waypoints)}"
-        )
-        st.markdown(
-            f"**Total Distance:** {shortest_route.total_distance:,.1f} nm "
-            f"({shortest_route.total_distance * 1.852:,.1f} km)"
-        )
-        # Compute risk on shortest path using the risk graph for fair comparison
-        G_dist_check, G_risk_check = build_maritime_graph(cargo_weight, vessel_length, cargo_type)
-        shortest_risk_on_risk_graph = 0.0
-        for i in range(len(shortest_route.path) - 1):
-            edge = G_risk_check.edges.get((shortest_route.path[i], shortest_route.path[i + 1]), {})
-            shortest_risk_on_risk_graph += edge.get("risk_score", 0)
-        st.markdown(f"**Risk Score (if taken):** {shortest_risk_on_risk_graph:,.1f}")
-        eta_short = shortest_route.total_distance / 14
-        st.markdown(f"**Est. Transit Time:** {eta_short:,.1f} hours ({eta_short / 24:,.1f} days) @ 14 kn")
-        st.markdown("**Segment Breakdown:**")
-        st.markdown(segment_table_html(shortest_route.segment_details), unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+    with tab_compare:
+        col_safe, col_short = st.columns(2)
 
-    # ── Summary Insight ──
-    st.markdown("")
-    st.markdown(
-        "<h3 style='color:#e2e8f0;font-weight:700;'>"
-        "💡&ensp;AI Route Advisory</h3>",
-        unsafe_allow_html=True,
-    )
-
-    same_route = shortest_route.path == safest_route.path
-
-    if same_route:
-        summary = (
-            "✅ **Both routes are identical.** Under the current parameters, the shortest "
-            "distance route is already the safest option. No trade-off required."
-        )
-    else:
-        fuel_save_est = dist_diff * 0.06  # rough tons of fuel per nm for mid-size vessel
-        summary = (
-            f"🔀 **The routes diverge.** The safest route adds **{dist_diff:,.0f} nm** "
-            f"(+{pct_longer:.1f}%) compared to the shortest path, but reduces the cumulative "
-            f"risk score by **{risk_diff:,.0f} points**.\n\n"
-            f"• **Shortest route** passes through **higher piracy & conflict zones** "
-            f"(South China Sea Central / Natuna Sea corridor).\n\n"
-            f"• **Safest route** favours the **Gulf of Thailand / East Malaysia coastal** "
-            f"passage, which is longer but avoids disputed waters.\n\n"
-            f"• Estimated additional fuel consumption for the safer route: "
-            f"~**{fuel_save_est:,.0f} metric tons** (at 0.06 t/nm avg).\n\n"
-            f"🏷️ **Recommendation for {cargo_type} cargo:** "
-        )
-        if cargo_type in ("Hazardous (IMDG)", "Liquid (Oil/Gas)"):
-            summary += (
-                "Given the elevated risk profile of this cargo type, the **safest route is "
-                "strongly recommended** despite the extra distance. Insurance premiums and "
-                "potential incident costs far outweigh fuel savings."
+        with col_safe:
+            st.markdown(
+                '<div class="route-compare">'
+                '<h3>🟢 Safest Optimal Route</h3>',
+                unsafe_allow_html=True,
             )
+            st.success(f"**Pathway:** {' → '.join(wp.name for wp in safest_route.waypoints)}", icon="🟢")
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Distance", f"{safest_route.total_distance:,.1f} nm")
+            m2.metric("Risk Score", f"{safest_route.total_risk_score:,.1f}")
+            eta_safe = safest_route.total_distance / 14
+            m3.metric("Transit ETA", f"{eta_safe:,.1f} hrs")
+            
+            with st.expander("📍 View Segment Breakdown", expanded=False):
+                st.markdown(segment_table_html(safest_route.segment_details), unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        with col_short:
+            st.markdown(
+                '<div class="route-compare">'
+                '<h3>🔴 Shortest Distance Route</h3>',
+                unsafe_allow_html=True,
+            )
+            st.warning(f"**Pathway:** {' → '.join(wp.name for wp in shortest_route.waypoints)}", icon="🔴")
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Distance", f"{shortest_route.total_distance:,.1f} nm")
+            m2.metric("Risk Score", f"{shortest_risk_on_risk_graph:,.1f}")
+            eta_short = shortest_route.total_distance / 14
+            m3.metric("Transit ETA", f"{eta_short:,.1f} hrs")
+            
+            with st.expander("📍 View Segment Breakdown", expanded=False):
+                st.markdown(segment_table_html(shortest_route.segment_details), unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+    with tab_ai:
+        same_route = shortest_route.path == safest_route.path
+        if same_route:
+            st.success("**Both routes are identical.** Under the current parameters, the shortest distance route is already the safest option. No trade-off required.", icon="✅")
         else:
-            summary += (
-                "Both routes are viable. Consider the safest route if **war risk insurance "
-                "premiums** for the SCS corridor exceed the fuel-cost savings of the "
-                "shorter path."
-            )
+            fuel_save_est = dist_diff * 0.06
+            st.info(f"🔀 **The routes diverge.** The safest route adds **{dist_diff:,.0f} nm** (+{pct_longer:.1f}%) compared to the shortest path, but reduces the cumulative risk score by **{risk_diff:,.0f} points**.", icon="🔀")
+            st.markdown(f"• **Shortest route** passes through **higher piracy & conflict zones** (South China Sea Central / Natuna Sea corridor).")
+            st.markdown(f"• **Safest route** favours the **Gulf of Thailand / East Malaysia coastal** passage, which is longer but avoids disputed waters.")
+            st.markdown(f"• Estimated additional fuel consumption for the safer route: ~**{fuel_save_est:,.0f} metric tons** (at 0.06 t/nm avg).")
 
-    st.markdown(
-        f'<div class="info-box">{summary}</div>',
-        unsafe_allow_html=True,
-    )
+            if cargo_type in ("Hazardous (IMDG)", "Liquid (Oil/Gas)"):
+                st.error("🏷️ **Recommendation for " + cargo_type + " cargo:** Given the elevated risk profile of this cargo type, the **safest route is strongly recommended** despite the extra distance. Insurance premiums and potential incident costs far outweigh fuel savings.", icon="🚨")
+            else:
+                st.warning("🏷️ **Recommendation for " + cargo_type + " cargo:** Both routes are viable. Consider the safest route if **war risk insurance premiums** for the SCS corridor exceed the fuel-cost savings of the shorter path.", icon="💡")
 
-    # ── Data Export ──
-    st.markdown("")
-    st.markdown(
-        "<h3 style='color:#e2e8f0;font-weight:700;'>"
-        "📥&ensp;Export Route Data</h3>",
-        unsafe_allow_html=True,
-    )
-    exp1, exp2 = st.columns(2)
-    with exp1:
-        df_safe = pd.DataFrame(safest_route.segment_details)
-        csv_safe = df_safe.to_csv(index=False).encode("utf-8")
-        st.download_button(
-            "⬇️  Download Safest Route CSV",
-            csv_safe,
-            "safest_route.csv",
-            "text/csv",
-            use_container_width=True,
+        st.markdown("")
+        st.markdown(
+            "<h3 style='color:#e2e8f0;font-weight:700;'>"
+            "📥&ensp;Export Route Data</h3>",
+            unsafe_allow_html=True,
         )
-    with exp2:
-        df_short = pd.DataFrame(shortest_route.segment_details)
-        csv_short = df_short.to_csv(index=False).encode("utf-8")
-        st.download_button(
-            "⬇️  Download Shortest Route CSV",
-            csv_short,
-            "shortest_route.csv",
-            "text/csv",
-            use_container_width=True,
-        )
+        exp1, exp2 = st.columns(2)
+        with exp1:
+            df_safe = pd.DataFrame(safest_route.segment_details)
+            csv_safe = df_safe.to_csv(index=False).encode("utf-8")
+            st.download_button("⬇️  Download Safest Route CSV", csv_safe, "safest_route.csv", "text/csv", use_container_width=True)
+        with exp2:
+            df_short = pd.DataFrame(shortest_route.segment_details)
+            csv_short = df_short.to_csv(index=False).encode("utf-8")
+            st.download_button("⬇️  Download Shortest Route CSV", csv_short, "shortest_route.csv", "text/csv", use_container_width=True)
 
 else:
     # ── Welcome state (no route calculated yet) ──
