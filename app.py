@@ -46,7 +46,10 @@ footer {visibility: hidden;}
 header {visibility: hidden;}
 
 /* ── Global ── */
-html, body, [class*="st-"] {
+html, body, .stApp {
+    font-family: 'Inter', sans-serif;
+}
+.stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6, .stApp p, .stApp label, .stApp li, .stApp button, .stApp input, .stApp select {
     font-family: 'Inter', sans-serif;
 }
 .stApp {
@@ -235,12 +238,57 @@ class EdgeRisk:
 
 # ── Destinations ──
 DESTINATIONS = {
+    # Singapore
     "Singapore (Singapore Port)": "singapore_port",
+    "Singapore (Jurong Port)": "jurong_port",
+    
+    # Thailand
     "Thailand (Laem Chabang)": "laem_chabang",
+    "Thailand (Bangkok Port)": "bangkok_port",
+    "Thailand (Map Ta Phut)": "map_ta_phut",
+    "Thailand (Songkhla)": "songkhla",
+    
+    # Indonesia
     "Indonesia (Tanjung Priok - Jakarta)": "tanjung_priok",
+    "Indonesia (Tanjung Perak - Surabaya)": "tanjung_perak",
+    "Indonesia (Belawan - Medan)": "belawan",
+    "Indonesia (Makassar)": "makassar",
+    "Indonesia (Semarang)": "semarang",
+    "Indonesia (Batam)": "batam",
+    "Indonesia (Dumai)": "dumai",
+    "Indonesia (Balikpapan)": "balikpapan",
+    
+    # Philippines
     "Philippines (Port of Manila)": "manila_port",
+    "Philippines (Cebu)": "cebu",
+    "Philippines (Davao)": "davao",
+    "Philippines (Subic Bay)": "subic_bay",
+    "Philippines (Batangas)": "batangas",
+    "Philippines (Cagayan de Oro)": "cagayan_de_oro",
+    "Philippines (Iloilo)": "iloilo",
+    
+    # Malaysia
     "Malaysia (Port Klang)": "port_klang",
-    "Brunei (Muara Port)": "muara_port"
+    "Malaysia (Tanjung Pelepas)": "tanjung_pelepas",
+    "Malaysia (Penang Port)": "penang",
+    "Malaysia (Bintulu)": "bintulu",
+    "Malaysia (Kuantan)": "kuantan",
+    "Malaysia (Pasir Gudang)": "pasir_gudang",
+    
+    # Brunei
+    "Brunei (Muara Port)": "muara_port",
+    
+    # Cambodia
+    "Cambodia (Sihanoukville)": "sihanoukville",
+    "Cambodia (Phnom Penh)": "phnom_penh",
+    
+    # Myanmar
+    "Myanmar (Yangon)": "yangon",
+    "Myanmar (Thilawa)": "thilawa",
+    "Myanmar (Sittwe)": "sittwe",
+    
+    # Timor-Leste
+    "Timor-Leste (Dili)": "dili"
 }
 
 # ── Waypoints (nodes) ──
@@ -338,6 +386,126 @@ WAYPOINTS: Dict[str, Waypoint] = {
         "Muara Port (Brunei)", 5.0333, 115.0667, 
         "Only deep water port in Brunei"
     ),
+    "jurong_port": Waypoint(
+        "Jurong Port (Singapore)", 1.3060, 103.7150,
+        "Major multipurpose port in Singapore"
+    ),
+    "bangkok_port": Waypoint(
+        "Bangkok Port (Thailand)", 13.7000, 100.5700,
+        "River port in the capital city"
+    ),
+    "map_ta_phut": Waypoint(
+        "Map Ta Phut (Thailand)", 12.6600, 101.1600,
+        "Major industrial port in Thailand"
+    ),
+    "songkhla": Waypoint(
+        "Songkhla (Thailand)", 7.2200, 100.5800,
+        "Primary port in southern Thailand"
+    ),
+    "tanjung_perak": Waypoint(
+        "Tanjung Perak (Indonesia)", -7.2000, 112.7300,
+        "Major seaport in Surabaya, East Java"
+    ),
+    "belawan": Waypoint(
+        "Belawan (Indonesia)", 3.7800, 98.6900,
+        "Major seaport in Medan, Sumatra"
+    ),
+    "makassar": Waypoint(
+        "Makassar (Indonesia)", -5.1300, 119.4100,
+        "Major port in South Sulawesi"
+    ),
+    "semarang": Waypoint(
+        "Semarang (Indonesia)", -5.9500, 110.4200,
+        "Tanjung Emas Port, Central Java"
+    ),
+    "batam": Waypoint(
+        "Batam (Indonesia)", 1.1600, 104.0000,
+        "Batu Ampar Port near Singapore"
+    ),
+    "dumai": Waypoint(
+        "Dumai (Indonesia)", 1.6800, 101.4500,
+        "Major palm oil and petrochemical port in Sumatra"
+    ),
+    "balikpapan": Waypoint(
+        "Balikpapan (Indonesia)", -1.2700, 116.8100,
+        "Major seaport in East Kalimantan"
+    ),
+    "cebu": Waypoint(
+        "Cebu (Philippines)", 10.2900, 123.9000,
+        "Major domestic and international port in Visayas"
+    ),
+    "davao": Waypoint(
+        "Davao (Philippines)", 7.1100, 125.6600,
+        "Primary port in Mindanao"
+    ),
+    "subic_bay": Waypoint(
+        "Subic Bay (Philippines)", 14.8000, 120.2800,
+        "Former naval base, now a major industrial port"
+    ),
+    "batangas": Waypoint(
+        "Batangas (Philippines)", 13.7500, 121.0300,
+        "Major seaport in Calabarzon"
+    ),
+    "cagayan_de_oro": Waypoint(
+        "Cagayan de Oro (Philippines)", 8.5000, 124.6400,
+        "Key gateway in northern Mindanao"
+    ),
+    "iloilo": Waypoint(
+        "Iloilo (Philippines)", 10.6900, 122.5800,
+        "Major port in Western Visayas"
+    ),
+    "tanjung_pelepas": Waypoint(
+        "Tanjung Pelepas (Malaysia)", 1.3630, 103.5480,
+        "Major container port in Johor"
+    ),
+    "penang": Waypoint(
+        "Penang Port (Malaysia)", 5.4000, 100.3500,
+        "Major port in northern Peninsular Malaysia"
+    ),
+    "bintulu": Waypoint(
+        "Bintulu Port (Malaysia)", 3.2660, 113.0660,
+        "Major deep water port in Sarawak"
+    ),
+    "kuantan": Waypoint(
+        "Kuantan Port (Malaysia)", 3.9780, 103.4350,
+        "Major port on east coast of Peninsular Malaysia"
+    ),
+    "pasir_gudang": Waypoint(
+        "Pasir Gudang (Malaysia)", 1.4330, 103.9000,
+        "Major industrial port in Johor"
+    ),
+    "sihanoukville": Waypoint(
+        "Sihanoukville (Cambodia)", 10.6400, 103.5000,
+        "Cambodia's sole deep-water sea port"
+    ),
+    "phnom_penh": Waypoint(
+        "Phnom Penh (Cambodia)", 11.5800, 104.9200,
+        "Major river port in Cambodia's capital"
+    ),
+    "yangon": Waypoint(
+        "Yangon (Myanmar)", 16.7600, 96.1600,
+        "Primary seaport of Myanmar"
+    ),
+    "thilawa": Waypoint(
+        "Thilawa (Myanmar)", 16.6600, 96.2500,
+        "Major deep water port near Yangon"
+    ),
+    "sittwe": Waypoint(
+        "Sittwe (Myanmar)", 20.1400, 92.8900,
+        "Deep water port in Rakhine State"
+    ),
+    "dili": Waypoint(
+        "Dili (Timor-Leste)", -8.5500, 125.5700,
+        "Main port and capital of Timor-Leste"
+    ),
+    "java_sea": Waypoint(
+        "Java Sea", -4.0000, 110.0000,
+        "Navigational waypoint in Java Sea"
+    ),
+    "andaman_sea": Waypoint(
+        "Andaman Sea", 10.0000, 96.0000,
+        "Route towards Myanmar"
+    ),
 }
 
 # ── Edges: (node_a, node_b, distance_nm, EdgeRisk) ──
@@ -413,6 +581,54 @@ EDGES: List[Tuple[str, str, float, EdgeRisk]] = [
     ("scs_east", "brunei_coast", 350, EdgeRisk(0.15, 0.10, 0.20)),
     ("natuna_sea", "brunei_coast", 400, EdgeRisk(0.12, 0.08, 0.15)),
     ("brunei_coast", "muara_port", 40, EdgeRisk(0.02, 0.01, 0.05)),
+    
+    # ── New Additions ──
+    # Cambodia
+    ("phu_quoc", "sihanoukville", 40, EdgeRisk(0.01, 0.01, 0.05)),
+    ("sihanoukville", "phnom_penh", 180, EdgeRisk(0.01, 0.01, 0.02)),
+    
+    # Thailand (Additional)
+    ("gulf_thai", "songkhla", 200, EdgeRisk(0.02, 0.05, 0.08)),
+    ("laem_chabang", "bangkok_port", 50, EdgeRisk(0.01, 0.01, 0.02)),
+    ("laem_chabang", "map_ta_phut", 30, EdgeRisk(0.01, 0.01, 0.02)),
+
+    # Malaysia (Additional)
+    ("east_malaysia", "kuantan", 50, EdgeRisk(0.02, 0.01, 0.05)),
+    ("singapore_strait", "pasir_gudang", 10, EdgeRisk(0.01, 0.01, 0.02)),
+    ("singapore_strait", "tanjung_pelepas", 20, EdgeRisk(0.01, 0.01, 0.02)),
+    ("malacca_strait", "penang", 200, EdgeRisk(0.05, 0.02, 0.05)),
+    ("brunei_coast", "bintulu", 150, EdgeRisk(0.05, 0.02, 0.10)),
+
+    # Singapore (Additional)
+    ("singapore_strait", "jurong_port", 15, EdgeRisk(0.01, 0.01, 0.02)),
+
+    # Indonesia (Additional)
+    ("singapore_strait", "batam", 15, EdgeRisk(0.02, 0.01, 0.02)),
+    ("malacca_strait", "belawan", 250, EdgeRisk(0.08, 0.02, 0.08)),
+    ("malacca_strait", "dumai", 100, EdgeRisk(0.05, 0.01, 0.05)),
+    ("karimata_strait", "java_sea", 200, EdgeRisk(0.05, 0.02, 0.10)),
+    ("tanjung_priok", "java_sea", 250, EdgeRisk(0.05, 0.02, 0.10)),
+    ("java_sea", "semarang", 150, EdgeRisk(0.04, 0.01, 0.08)),
+    ("java_sea", "tanjung_perak", 200, EdgeRisk(0.04, 0.01, 0.08)),
+    ("java_sea", "makassar", 500, EdgeRisk(0.06, 0.05, 0.15)),
+    ("java_sea", "balikpapan", 450, EdgeRisk(0.08, 0.02, 0.12)),
+
+    # Philippines (Additional)
+    ("manila_port", "subic_bay", 50, EdgeRisk(0.02, 0.05, 0.05)),
+    ("manila_port", "batangas", 80, EdgeRisk(0.02, 0.05, 0.05)),
+    ("palawan_passage", "cebu", 350, EdgeRisk(0.12, 0.15, 0.20)),
+    ("palawan_passage", "iloilo", 300, EdgeRisk(0.10, 0.10, 0.18)),
+    ("palawan_passage", "cagayan_de_oro", 450, EdgeRisk(0.15, 0.20, 0.25)),
+    ("palawan_passage", "davao", 600, EdgeRisk(0.20, 0.30, 0.30)),
+
+    # Myanmar
+    ("penang", "andaman_sea", 300, EdgeRisk(0.05, 0.02, 0.15)),
+    ("andaman_sea", "yangon", 400, EdgeRisk(0.05, 0.20, 0.15)),
+    ("andaman_sea", "thilawa", 390, EdgeRisk(0.05, 0.20, 0.15)),
+    ("andaman_sea", "sittwe", 600, EdgeRisk(0.08, 0.25, 0.20)),
+
+    # Timor-Leste
+    ("makassar", "dili", 500, EdgeRisk(0.05, 0.05, 0.15)),
 ]
 
 # ── Cargo-type risk multipliers ──
