@@ -25,6 +25,10 @@ import streamlit.components.v1 as components
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Optional
 import requests
+import feedparser
+import concurrent.futures
+from datetime import datetime, timedelta
+import time
 
 
 # =============================================================================
@@ -642,6 +646,83 @@ CARGO_RISK_MULTIPLIERS: Dict[str, Dict[str, float]] = {
     "Refrigerated (Reefer)": {"piracy": 1.1, "conflict": 1.0, "weather": 1.3},
 }
 
+# ── RSS Feeds ──
+RSS_FEEDS = {
+    "weather": [
+        "https://www.weather.gov.sg/files/rss/rss24HrForecast.xml",
+        "https://www.weather.gov.sg/files/rss/rssHeavyRain_new.xml",
+        "https://www.metoc.navy.mil/jtwc/rss/jtwc.rss"
+    ],
+    "security": [
+        "https://www.crisisgroup.org/rss/asia.xml",
+        "https://www.aljazeera.com/xml/rss/all.xml",
+        "https://www.marinelink.com/news/rss/maritime-security",
+        "https://shipping.einnews.com/rss/x2S6T3W6BfG-qO07"
+    ],
+    "logistics": [
+        "https://vneconomy.vn/the-gioi.rss",
+        "https://theloadstar.com/feed/"
+    ]
+}
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def fetch_rss_feed(url: str, max_items=5) -> List[Dict]:
+    SEA_KEYWORDS = [
+        "asia", "châu á", "đông nam á", "vietnam", "việt nam", "viet nam",
+        "singapore", "malaysia", "indonesia", "philippine", "thailand", "thái lan",
+        "cambodia", "campuchia", "myanmar", "timor", "brunei", "biển đông",
+        "south china sea", "malacca", "asean", "jakarta", "manila", "kuala lumpur",
+        "bangkok", "yangon", "ho chi minh", "hồ chí minh", "biển", "tàu", "hải quân", 
+        "cảng", "maritime", "ship", "port", "cargo", "chuỗi cung ứng", "logistics", "vận động"
+    ]
+    try:
+        feed = feedparser.parse(url)
+        results = []
+        source_name = feed.feed.get("title", url.split("/")[2][:20])
+        
+        is_weather_feed = "weather.gov.sg" in url or "navy.mil" in url
+        one_week_ago = datetime.now() - timedelta(days=7)
+        
+        for entry in feed.entries:
+            # Check if news is older than 1 week
+            time_struct = entry.get("published_parsed")
+            if time_struct:
+                try:
+                    dt = datetime.fromtimestamp(time.mktime(time_struct))
+                    if dt < one_week_ago:
+                        continue
+                except:
+                    pass
+                    
+            title_lower = entry.title.lower()
+            desc_lower = entry.get("description", "").lower()
+            
+            # Khí tượng Singapore/Mỹ mặc định chấp nhận, tin tức khác phải có từ khóa SEA
+            if is_weather_feed or any(kw in title_lower or kw in desc_lower for kw in SEA_KEYWORDS):
+                results.append({
+                    "title": entry.title,
+                    "link": entry.link,
+                    "source": source_name,
+                    "date": entry.get("published", "")
+                })
+                
+            if len(results) >= max_items:
+                break
+                
+        return results
+    except Exception as e:
+        return []
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def fetch_all_rss_category(category: str, max_items_per_feed=5) -> List[Dict]:
+    urls = RSS_FEEDS.get(category, [])
+    all_news = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        futures = {executor.submit(fetch_rss_feed, url, max_items_per_feed): url for url in urls}
+        for future in concurrent.futures.as_completed(futures):
+            all_news.extend(future.result())
+    return all_news
+
 
 # =============================================================================
 # 3. REALTIME WEATHER DATA
@@ -1210,10 +1291,11 @@ if run_btn:
     st.markdown("---")
 
     # ── TABS ──
-    tab_map, tab_compare, tab_ai = st.tabs([
+    tab_map, tab_compare, tab_ai, tab_news = st.tabs([
         "🗺️ Interactive View", 
         "📋 Route Details", 
-        "💡 Recommendations & Export"
+        "💡 Recommendations & Export",
+        "📰 Live Intel & News"
     ])
 
     with tab_map:
@@ -1296,6 +1378,50 @@ if run_btn:
             df_short = pd.DataFrame(shortest_route.segment_details)
             csv_short = df_short.to_csv(index=False).encode("utf-8")
             st.download_button("⬇️  Download Shortest Route CSV", csv_short, "shortest_route.csv", "text/csv", use_container_width=True)
+
+    with tab_news:
+        st.markdown(
+            "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:12px;'>"
+            "📰&ensp;Live Maritime Intel & News Data</h3>",
+            unsafe_allow_html=True,
+        )
+        st.caption("Auto-refreshed from global maritime, security, and weather RSS feeds.")
+        
+        nc1, nc2, nc3 = st.columns(3)
+        
+        # Security News
+        with nc1:
+            st.markdown("#### 🚨 Security & Conflict")
+            st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
+            sec_news = fetch_all_rss_category("security", max_items_per_feed=5)
+            for item in sec_news[:5]:
+                st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
+                st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
+            if not sec_news:
+                st.info("Không có tin tức an ninh biển Đông tuần này.")
+                
+        # Weather News
+        with nc2:
+            st.markdown("#### 🌪️ Weather Warnings")
+            st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
+            wea_news = fetch_all_rss_category("weather", max_items_per_feed=5)
+            for item in wea_news[:5]:
+                st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
+                st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
+            if not wea_news:
+                st.info("Thời tiết vùng an toàn, không có cảnh báo tuần này.")
+                
+        # Economics / Logistics
+        with nc3:
+            st.markdown("#### 🚢 Ports & Economics")
+            st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
+            eco_news = fetch_all_rss_category("logistics", max_items_per_feed=5)
+            for item in eco_news[:5]:
+                st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
+                st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
+            if not eco_news:
+                st.info("Không có tin tức chuỗi cung ứng Đông Nam Á.")
+
 
 else:
     # ── Welcome state (no route calculated yet) ──
