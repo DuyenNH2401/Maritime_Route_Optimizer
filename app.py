@@ -792,7 +792,8 @@ def build_maritime_graph(
     length_factor = min(1.0 + (vessel_length / 400) * 0.1, 1.2)
     vessel_factor = weight_factor * length_factor
 
-    multipliers = CARGO_RISK_MULTIPLIERS.get(cargo_type, CARGO_RISK_MULTIPLIERS["Dry Bulk"])
+    _default_key = list(CARGO_RISK_MULTIPLIERS.keys())[0]
+    multipliers = CARGO_RISK_MULTIPLIERS.get(cargo_type, CARGO_RISK_MULTIPLIERS[_default_key])
 
     G_dist = nx.Graph()
     G_risk = nx.Graph()
@@ -1170,7 +1171,7 @@ def app_home():
             <div class="home-title">Maritime Route Intelligence</div>
             <p class="home-subtitle">
                 Hệ thống Tối ưu hóa Tuyến đường biển thông minh. 
-                Cân bằng giữa chi phí vận tải, rủi ro an ninh, và điều kiện thời tiết khắc nghiệt trên khu vực Biển Đông - Đông Nam Á.
+                Cân bằng giữa chi phí vận tải, rủi ro an ninh, và điều kiện thời tiết khắc nghiệt trên khu vực Biển&nbsp;Đông&nbsp;-&nbsp;Đông&nbsp;Nam&nbsp;Á.
             </p>
         </div>
     ''', unsafe_allow_html=True)
