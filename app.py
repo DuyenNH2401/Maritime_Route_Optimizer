@@ -303,7 +303,7 @@ WAYPOINTS: Dict[str, Waypoint] = {
         "Deep-water anchorage and pilot boarding area"
     ),
     "con_dao": Waypoint(
-        "Côn Đảo Islands", 8.6900, 106.6100,
+        "Côn Đảo Islands", 8.6000, 106.5000,
         "Archipelago waypoint south of Vietnam mainland"
     ),
     "ca_mau": Waypoint(
@@ -323,7 +323,7 @@ WAYPOINTS: Dict[str, Waypoint] = {
         "Far offshore route to bypass central weather systems"
     ),
     "gulf_thai": Waypoint(
-        "Gulf of Thailand", 6.8000, 103.5000,
+        "Gulf of Thailand", 6.8000, 103.8000,
         "Sheltered waters west of the South China Sea"
     ),
     "natuna_sea": Waypoint(
@@ -335,15 +335,15 @@ WAYPOINTS: Dict[str, Waypoint] = {
         "Navigational waypoint with moderate weather protection"
     ),
     "east_malaysia": Waypoint(
-        "East Peninsular Malaysia", 3.0000, 104.5000,
+        "East Peninsular Malaysia", 3.0000, 104.4000,
         "Coastal passage along the Malaysian east coast"
     ),
     "tioman": Waypoint(
-        "Tioman Coastal Bypass", 2.8000, 104.1500,
+        "Tioman Coastal Bypass", 2.8000, 104.3000,
         "Highly sheltered coastal route avoiding open sea swell"
     ),
     "singapore_strait": Waypoint(
-        "Singapore Strait Approach", 1.8000, 104.2000,
+        "Singapore Strait Approach", 1.8000, 104.3500,
         "Traffic Separation Scheme approach to Singapore"
     ),
     "singapore_port": Waypoint(
@@ -767,16 +767,8 @@ def compute_route(
 # Add intermediate turning points for certain edges to make them zigzag around islands
 # rather than passing straight through the middle of the landmass.
 EDGE_BYPASSES = {
-    ("east_malaysia", "tioman"): [
-        (2.92, 104.32),
-        (2.85, 104.22),
-    ],
-    ("tioman", "singapore_strait"): [
-        (2.72, 104.11), 
-        (2.55, 104.13),
-    ],
     ("ca_mau", "phu_quoc"): [
-        (8.60, 104.20),
+        (8.40, 104.50),
         (9.00, 103.95),
     ],
     ("phu_quoc", "sihanoukville"): [
@@ -921,7 +913,7 @@ def render_map(
     # ── Legend ──
     legend_html = """
     <div style="
-        position: fixed; bottom: 30px; left: 30px; z-index: 1000;
+        position: absolute; top: 20px; right: 20px; z-index: 9999;
         background: rgba(15,23,42,0.92); backdrop-filter: blur(10px);
         border: 1px solid rgba(100,150,255,0.25); border-radius: 12px;
         padding: 14px 18px; font-family: Inter, sans-serif;
