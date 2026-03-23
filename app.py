@@ -43,7 +43,7 @@ CUSTOM_CSS = """
 /* ── Hide Streamlit Defaults ── */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
-header {visibility: hidden;}
+/* header {visibility: hidden;} -- removed to keep the sidebar toggle button visible */
 
 /* ── Global ── */
 html, body, .stApp {
