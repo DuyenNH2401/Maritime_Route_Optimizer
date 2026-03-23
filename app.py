@@ -762,6 +762,63 @@ def compute_route(
 
 
 # =============================================================================
+# 4.5 ROUTE GEOMETRY BYPASSES (ZIGZAG TO AVOID ISLANDS)
+# =============================================================================
+# Add intermediate turning points for certain edges to make them zigzag around islands
+# rather than passing straight through the middle of the landmass.
+EDGE_BYPASSES = {
+    ("east_malaysia", "tioman"): [
+        (2.92, 104.32),
+        (2.85, 104.22),
+    ],
+    ("tioman", "singapore_strait"): [
+        (2.72, 104.11), 
+        (2.55, 104.13),
+    ],
+    ("ca_mau", "phu_quoc"): [
+        (8.60, 104.20),
+        (9.00, 103.95),
+    ],
+    ("phu_quoc", "sihanoukville"): [
+        (10.20, 103.85),
+        (10.45, 103.70),
+    ],
+    ("vung_tau", "con_dao"): [
+        (9.80, 106.80),
+        (9.20, 106.60),
+    ],
+    ("malacca_strait", "port_klang"): [
+        (2.70, 101.20)
+    ]
+}
+
+def get_route_coordinates(path_nodes: List[str]) -> List[Tuple[float, float]]:
+    """Convert a sequence of node IDs into a list of lat/lon coords, including zigzags."""
+    if not path_nodes:
+        return []
+        
+    coords = []
+    for i in range(len(path_nodes) - 1):
+        n1 = path_nodes[i]
+        n2 = path_nodes[i+1]
+        
+        # Always add the start point of this segment if it's the very first node
+        if i == 0:
+            coords.append((WAYPOINTS[n1].lat, WAYPOINTS[n1].lon))
+            
+        # Check if we have defined a zigzag bypass for this edge
+        if (n1, n2) in EDGE_BYPASSES:
+            coords.extend(EDGE_BYPASSES[(n1, n2)])
+        elif (n2, n1) in EDGE_BYPASSES:
+            coords.extend(reversed(EDGE_BYPASSES[(n2, n1)]))
+            
+        # Add the end point of this segment
+        coords.append((WAYPOINTS[n2].lat, WAYPOINTS[n2].lon))
+        
+    return coords
+
+
+# =============================================================================
 # 5. MAP RENDERING (FOLIUM)
 # =============================================================================
 def render_map(
@@ -771,8 +828,8 @@ def render_map(
 ) -> folium.Map:
     """
     Build a Folium map centered on Southeast Asia showing:
-      • Red polyline for the shortest-distance route
-      • Green polyline for the safest (risk-optimized) route
+      • Red polyline for the shortest-distance route (with zigzags)
+      • Green polyline for the safest route (with zigzags)
       • Markers for each waypoint
     """
     sea_map = folium.Map(
@@ -784,7 +841,7 @@ def render_map(
 
     # ── Shortest route (red / orange) ──
     if shortest:
-        coords_short = [(wp.lat, wp.lon) for wp in shortest.waypoints]
+        coords_short = get_route_coordinates(shortest.path)
         folium.PolyLine(
             coords_short,
             color="#ef4444",
@@ -807,7 +864,7 @@ def render_map(
 
     # ── Safest route (green / teal) ──
     if safest:
-        coords_safe = [(wp.lat, wp.lon) for wp in safest.waypoints]
+        coords_safe = get_route_coordinates(safest.path)
         folium.PolyLine(
             coords_safe,
             color="#22c55e",
