@@ -35,7 +35,7 @@ import time
 # 1. PAGE CONFIGURATION & CUSTOM STYLING
 # =============================================================================
 st.set_page_config(
-    page_title="Maritime Route Optimizer | Vietnam ➜ SEA",
+    page_title="Tối Ưu Tuyến Đường Hàng Hải | VN ➜ SEA",
     page_icon="🚢",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -514,7 +514,7 @@ WAYPOINTS: Dict[str, Waypoint] = {
 }
 
 # ── Edges: (node_a, node_b, distance_nm, EdgeRisk) ──
-# Distances in nautical miles (approximate).
+# Khoảng Cáchs in nautical miles (approximate).
 EDGES: List[Tuple[str, str, float, EdgeRisk]] = [
     # Departure segment
     ("hcm_port", "vung_tau", 45, EdgeRisk(0.02, 0.01, 0.05)),
@@ -639,11 +639,11 @@ EDGES: List[Tuple[str, str, float, EdgeRisk]] = [
 # ── Cargo-type risk multipliers ──
 # These multipliers inflate the risk penalty for certain cargo types.
 CARGO_RISK_MULTIPLIERS: Dict[str, Dict[str, float]] = {
-    "Dry Bulk": {"piracy": 1.0, "conflict": 1.0, "weather": 1.0},
-    "Liquid (Oil/Gas)": {"piracy": 1.3, "conflict": 1.2, "weather": 1.1},
-    "Containers": {"piracy": 1.2, "conflict": 1.1, "weather": 1.0},
-    "Hazardous (IMDG)": {"piracy": 2.0, "conflict": 1.8, "weather": 1.5},
-    "Refrigerated (Reefer)": {"piracy": 1.1, "conflict": 1.0, "weather": 1.3},
+    "Hàng Rời (Dry Bulk)": {"piracy": 1.0, "conflict": 1.0, "weather": 1.0},
+    "Hàng Lỏng (Dầu/Khí)": {"piracy": 1.3, "conflict": 1.2, "weather": 1.1},
+    "Hàng Container": {"piracy": 1.2, "conflict": 1.1, "weather": 1.0},
+    "Hàng Nguy Hiểm (IMDG)": {"piracy": 2.0, "conflict": 1.8, "weather": 1.5},
+    "Hàng Đông Lạnh (Reefer)": {"piracy": 1.1, "conflict": 1.0, "weather": 1.3},
 }
 
 # ── RSS Feeds ──
@@ -964,7 +964,7 @@ def render_map(
             weight=4,
             opacity=0.85,
             dash_array="8 6",
-            tooltip="Shortest Distance Route",
+            tooltip="Tuyến Ngắn Nhất Route",
         ).add_to(sea_map)
 
         # Start / end markers
@@ -986,7 +986,7 @@ def render_map(
             color="#22c55e",
             weight=4,
             opacity=0.9,
-            tooltip="Safest Optimal Route",
+            tooltip="Tuyến An Toàn Nhất Route",
         ).add_to(sea_map)
 
     # ── Waypoint markers (all nodes) ──
@@ -1043,16 +1043,16 @@ def render_map(
         padding: 14px 18px; font-family: Inter, sans-serif;
         box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
         <div style="color:#e2e8f0;font-weight:700;font-size:13px;margin-bottom:8px;">
-            🗺️ Route Legend
+            🗺️ Chú Giải
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin:4px 0;">
             <div style="width:30px;height:3px;background:#ef4444;border-radius:2px;
                         border-top:2px dashed #ef4444;"></div>
-            <span style="color:#f87171;font-size:12px;">Shortest Distance</span>
+            <span style="color:#f87171;font-size:12px;">Tuyến Ngắn Nhất</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin:4px 0;">
             <div style="width:30px;height:3px;background:#22c55e;border-radius:2px;"></div>
-            <span style="color:#4ade80;font-size:12px;">Safest Optimal</span>
+            <span style="color:#4ade80;font-size:12px;">Tuyến An Toàn Nhất</span>
         </div>
     </div>
     """
@@ -1092,10 +1092,10 @@ def segment_table_html(segments: List[dict]) -> str:
     <table class="waypoint-table">
         <thead>
             <tr>
-                <th>From</th>
-                <th>To</th>
-                <th style="text-align:right;">Distance</th>
-                <th style="text-align:right;">Risk Score</th>
+                <th>Từ</th>
+                <th>Đến</th>
+                <th style="text-align:right;">Khoảng Cách</th>
+                <th style="text-align:right;">Điểm Rủi Ro</th>
             </tr>
         </thead>
         <tbody>{rows}</tbody>
@@ -1167,7 +1167,7 @@ def app_home():
         </style>
         
         <div class="home-container">
-            <h1 class="home-title">Maritime Route Intelligence</h1>
+            <div class="home-title">Maritime Route Intelligence</div>
             <p class="home-subtitle">
                 Hệ thống Tối ưu hóa Tuyến đường biển thông minh. 
                 Cân bằng giữa chi phí vận tải, rủi ro an ninh, và điều kiện thời tiết khắc nghiệt trên khu vực Biển Đông - Đông Nam Á.
@@ -1187,7 +1187,7 @@ def app_home():
     f1.markdown('''
         <div class="feature-card">
             <div class="icon-circle">🌩️</div>
-            <h3 style="color: #e2e8f0; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Dữ liệu Thời tiết Real-time</h3>
+            <div style="color: #e2e8f0; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Dữ liệu Thời tiết Real-time</div>
             <p style="color: #94a3b8; font-size: 14px; line-height: 1.5;">Tích hợp API biển Open-Meteo theo dõi chiều cao sóng thực tế dọc theo tuyến đường, cập nhật tức thời để né bão.</p>
         </div>
     ''', unsafe_allow_html=True)
@@ -1195,7 +1195,7 @@ def app_home():
     f2.markdown('''
         <div class="feature-card">
             <div class="icon-circle">🛡️</div>
-            <h3 style="color: #e2e8f0; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Phân tích Rủi ro An ninh</h3>
+            <div style="color: #e2e8f0; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Phân tích Rủi ro An ninh</div>
             <p style="color: #94a3b8; font-size: 14px; line-height: 1.5;">Tùy chỉnh hệ số nguy hiểm dựa trên mức độ cướp biển, vùng giao tranh và đặc tính nguy hiểm của hàng hóa.</p>
         </div>
     ''', unsafe_allow_html=True)
@@ -1203,14 +1203,14 @@ def app_home():
     f3.markdown('''
         <div class="feature-card">
             <div class="icon-circle">📊</div>
-            <h3 style="color: #e2e8f0; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Cân bằng Chi phí & An toàn</h3>
+            <div style="color: #e2e8f0; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Cân bằng Chi phí & An toàn</div>
             <p style="color: #94a3b8; font-size: 14px; line-height: 1.5;">Gợi ý lộ trình qua việc so sánh giữa Tuyến đường Ngắn nhất & Tuyến đường An toàn nhất, ước tính tiêu thụ nhiên liệu.</p>
         </div>
     ''', unsafe_allow_html=True)
     
     st.markdown('''
         <div style="text-align: center; padding: 80px 0 20px 0; color: #475569; font-size: 14px;">
-            &copy; 2026 Maritime Route Optimizer | Vietnam ➜ SEA
+            &copy; 2026 Maritime Tối Ưu Tuyến Đường | Vietnam ➜ SEA
         </div>
     ''', unsafe_allow_html=True)
 
@@ -1225,13 +1225,13 @@ def app_optimizer():
             '''
             <div style="text-align:center;padding:10px 0 18px 0;">
                 <span style="font-size:40px;">🚢</span>
-                <h2 style="margin:6px 0 2px 0;font-weight:800;
+                <div style="margin:6px 0 2px 0;font-size: 24px; font-weight:800;
                            background:linear-gradient(135deg,#60a5fa,#34d399);
                            -webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-                    Route Optimizer
-                </h2>
+                    Tối Ưu Tuyến Đường
+                </div>
                 <p style="color:#64748b;font-size:13px;margin:0;">
-                    Vietnam ➜ Southeast Asia
+                    Việt Nam ➜ Đông Nam Á
                 </p>
             </div>
             ''',
@@ -1241,44 +1241,44 @@ def app_optimizer():
 
         st.markdown("#### 🎯 Destination")
         target_selection = st.selectbox(
-            "Destination Port",
+            "Cảng Đích",
             list(DESTINATIONS.keys()),
             index=0,
-            help="Select the destination port in Southeast Asia."
+            help="Chọn cảng đích tại khu vực Đông Nam Á."
         )
         target_node = DESTINATIONS[target_selection]
 
         st.divider()
-        with st.expander("📦 Vessel & Cargo Parameters", expanded=True):
+        with st.expander("📦 Thông Số Tàu & Hàng Hóa", expanded=True):
             cargo_weight = st.number_input(
-                "Cargo Weight (tons)",
+                "Trọng Lượng Hàng (Tấn)",
                 min_value=100,
                 max_value=500_000,
                 value=25_000,
                 step=1_000,
-                help="Total weight of cargo in metric tons.",
+                help="Tổng trọng lượng hàng hóa (tấn mét).",
             )
             vessel_length = 180
 
             cargo_type = st.selectbox(
-                "Cargo Type",
+                "Loại Hàng Hóa",
                 list(CARGO_RISK_MULTIPLIERS.keys()),
                 index=2,
-                help="Select the primary cargo classification.",
+                help="Chọn phân loại hàng hóa chính.",
             )
 
         st.divider()
-        use_realtime_weather = st.checkbox("📡 Use Real-Time Weather (Open-Meteo)", value=False, help="Overrides static weather risk with live wave height data.")
+        use_realtime_weather = st.checkbox("📡 Sử dụng Thời tiết Thời gian thực (Open-Meteo)", value=False, help="Sử dụng dữ liệu chiều cao sóng thực tế thay cho dữ liệu rủi ro tĩnh.")
 
-        with st.expander("⚙️ Risk Weight Tuning"):
-            st.caption("Adjust how much each risk factor influences route selection.")
+        with st.expander("⚙️ Tùy Chỉnh Trọng Số Rủi Ro"):
+            st.caption("Điều chỉnh mức độ ảnh hưởng của các yếu tố rủi ro khi chọn tuyến.")
             # These sliders let the user fine-tune (advanced mode)
-            piracy_weight = st.slider("Piracy Sensitivity", 0.0, 2.0, 1.0, 0.1)
-            conflict_weight = st.slider("Conflict Zone Sensitivity", 0.0, 2.0, 1.0, 0.1)
-            weather_weight = st.slider("Bad Weather Sensitivity", 0.0, 2.0, 1.0, 0.1)
+            piracy_weight = st.slider("Hệ số Cướp Biển", 0.0, 2.0, 1.0, 0.1)
+            conflict_weight = st.slider("Hệ số Vùng Giao Tranh", 0.0, 2.0, 1.0, 0.1)
+            weather_weight = st.slider("Hệ số Thời Tiết Xấu", 0.0, 2.0, 1.0, 0.1)
 
         st.divider()
-        run_btn = st.button("🧭  Find Optimal Route", type="primary", use_container_width=True)
+        run_btn = st.button("🧭  Tìm Tuyến Đường Tối Ưu", type="primary", use_container_width=True)
 
     # =============================================================================
     # 8. MAIN PAGE – HEADER
@@ -1286,10 +1286,10 @@ def app_optimizer():
     st.markdown(
         '''
         <div style="padding:8px 0 4px 0;">
-            <div class="hero-title">Maritime Route Intelligence</div>
+            <div class="hero-title">Hệ Thống Phân Tích Đường Biển</div>
             <p class="hero-sub">
-                Real-time route optimization & risk assessment&ensp;·&ensp;
-                Ho&nbsp;Chi&nbsp;Minh&nbsp;City&ensp;➜&ensp;Southeast&nbsp;Asia
+                Tối ưu hóa và đánh giá rủi ro thời gian thực&ensp;·&ensp;
+                TP.&nbsp;Hồ&nbsp;Chí&nbsp;Minh&ensp;➜&ensp;Đông&nbsp;Nam&nbsp;Á
             </p>
         </div>
         ''',
@@ -1304,19 +1304,19 @@ def app_optimizer():
         # ── Validate inputs ──
         errors: List[str] = []
         if cargo_weight <= 0:
-            errors.append("Cargo weight must be a positive number.")
+            errors.append("Trọng lượng hàng hóa phải là số dương.")
         if vessel_length <= 0:
-            errors.append("Vessel length must be a positive number.")
+            errors.append("Chiều dài tàu phải là số dương.")
         if errors:
             for e in errors:
                 st.error(e)
             st.stop()
 
-        with st.spinner("🔄  Constructing maritime graph and computing optimal routes …"):
+        with st.spinner("🔄  Đang xây dựng đồ thị hàng hải và tính toán tuyến ưu việt nhất …"):
             # ── Fetch Live Weather (if enabled) ──
             if use_realtime_weather:
                 live_waves = fetch_realtime_weather_data(EDGES)
-                st.toast("✅ Real-time wave heights fetched successfully.")
+                st.toast("✅ Lấy dữ liệu sóng biển thành công.")
             else:
                 live_waves = None
 
@@ -1370,34 +1370,34 @@ def app_optimizer():
         # ── KPI Row ──
         st.markdown("---")
         st.markdown(
-            "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:2px;'>"
-            "📊&ensp;Key Performance Indicators</h3>",
+            "<div style='color:#e2e8f0;font-weight:700;margin-bottom:2px;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+            "📊&ensp;Chỉ Số Hiệu Suất (KPI)</div>",
             unsafe_allow_html=True,
         )
 
         k1, k2, k3, k4 = st.columns(4)
         with k1:
             st.metric(
-                label="🟢 Safest Distance", 
+                label="🟢 Độ Dài Tuyến An Toàn", 
                 value=f"{safest_route.total_distance:,.0f} nm",
-                delta=f"{dist_diff:,.0f} nm longer",
+                delta=f"{dist_diff:,.0f} nm (dài hơn)",
                 delta_color="inverse" if dist_diff > 0 else "off"
             )
         with k2:
             st.metric(
-                label="🛡️ Safest Risk Score", 
+                label="🛡️ Điểm Rủi Ro Hấp Nhất", 
                 value=f"{safest_route.total_risk_score:,.0f}",
-                delta=f"- {risk_diff:,.0f} risk pts",
+                delta=f"- {risk_diff:,.0f} điểm rủi ro",
                 delta_color="normal"
             )
         with k3:
             st.metric(
-                label="🔴 Shortest Distance", 
+                label="🔴 Độ Dài Tuyến Ngắn Nhất", 
                 value=f"{shortest_route.total_distance:,.0f} nm"
             )
         with k4:
             st.metric(
-                label="⚠️ Shortest Risk Score", 
+                label="⚠️ Điểm Rủi Ro Tuyến Ngắn", 
                 value=f"{shortest_risk_on_risk_graph:,.0f}"
             )
 
@@ -1405,19 +1405,19 @@ def app_optimizer():
 
         # ── TABS ──
         tab_map, tab_compare, tab_ai, tab_news = st.tabs([
-            "🗺️ Interactive View", 
-            "📋 Route Details", 
-            "💡 Recommendations & Export",
-            "📰 Live Intel & News"
+            "🗺️ Bản Đồ Tương Tác", 
+            "📋 Chi Tiết Tuyến", 
+            "💡 Khuyến Nghị & Xuất Dữ Liệu",
+            "📰 Tin Tức & Tình Hình Thực Tế"
         ])
 
         with tab_map:
             st.markdown(
-                "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:2px;'>"
-                "🗺️&ensp;Interactive Route Map</h3>",
+                "<div style='color:#e2e8f0;font-weight:700;margin-bottom:2px;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+                "🗺️&ensp;Bản Đồ Tuyến Đường Tương Tác</div>",
                 unsafe_allow_html=True,
             )
-            st.caption("Red dashed = Shortest Distance  ·  Green solid = Safest Optimal  ·  Click markers for details")
+            st.caption("Nét đứt đỏ = Ngắn nhất  ·  Nét liền xanh = An toàn tối ưu  ·  Bấm vào các mốc để xem chi tiết")
             route_map = render_map(shortest_route, safest_route, target_node)
             st.markdown('<div class="map-container">', unsafe_allow_html=True)
             components.html(route_map._repr_html_(), height=520)
@@ -1429,82 +1429,82 @@ def app_optimizer():
             with col_safe:
                 st.markdown(
                     '<div class="route-compare">'
-                    '<h3>🟢 Safest Optimal Route</h3>',
+                    '<div style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">🟢 Tuyến An Toàn Nhất Route</div>',
                     unsafe_allow_html=True,
                 )
-                st.success(f"**Pathway:** {' → '.join(wp.name for wp in safest_route.waypoints)}", icon="🟢")
+                st.success(f"**Lộ trình:** {' → '.join(wp.name for wp in safest_route.waypoints)}", icon="🟢")
                 m1, m2, m3 = st.columns(3)
-                m1.metric("Distance", f"{safest_route.total_distance:,.1f} nm")
-                m2.metric("Risk Score", f"{safest_route.total_risk_score:,.1f}")
+                m1.metric("Khoảng Cách", f"{safest_route.total_distance:,.1f} nm")
+                m2.metric("Điểm Rủi Ro", f"{safest_route.total_risk_score:,.1f}")
                 eta_safe = safest_route.total_distance / 14
-                m3.metric("Transit ETA", f"{eta_safe:,.1f} hrs")
+                m3.metric("Thời Gian Ước Tính", f"{eta_safe:,.1f} giờ")
                 
-                with st.expander("📍 View Segment Breakdown", expanded=False):
+                with st.expander("📍 Xem Chi Tiết Từng Chặng", expanded=False):
                     st.markdown(segment_table_html(safest_route.segment_details), unsafe_allow_html=True)
                 st.markdown("</div>", unsafe_allow_html=True)
 
             with col_short:
                 st.markdown(
                     '<div class="route-compare">'
-                    '<h3>🔴 Shortest Distance Route</h3>',
+                    '<div style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">🔴 Độ Dài Tuyến Ngắn Nhất Route</div>',
                     unsafe_allow_html=True,
                 )
-                st.warning(f"**Pathway:** {' → '.join(wp.name for wp in shortest_route.waypoints)}", icon="🔴")
+                st.warning(f"**Lộ trình:** {' → '.join(wp.name for wp in shortest_route.waypoints)}", icon="🔴")
                 m1, m2, m3 = st.columns(3)
-                m1.metric("Distance", f"{shortest_route.total_distance:,.1f} nm")
-                m2.metric("Risk Score", f"{shortest_risk_on_risk_graph:,.1f}")
+                m1.metric("Khoảng Cách", f"{shortest_route.total_distance:,.1f} nm")
+                m2.metric("Điểm Rủi Ro", f"{shortest_risk_on_risk_graph:,.1f}")
                 eta_short = shortest_route.total_distance / 14
-                m3.metric("Transit ETA", f"{eta_short:,.1f} hrs")
+                m3.metric("Thời Gian Ước Tính", f"{eta_short:,.1f} giờ")
                 
-                with st.expander("📍 View Segment Breakdown", expanded=False):
+                with st.expander("📍 Xem Chi Tiết Từng Chặng", expanded=False):
                     st.markdown(segment_table_html(shortest_route.segment_details), unsafe_allow_html=True)
                 st.markdown("</div>", unsafe_allow_html=True)
 
         with tab_ai:
             same_route = shortest_route.path == safest_route.path
             if same_route:
-                st.success("**Both routes are identical.** Under the current parameters, the shortest distance route is already the safest option. No trade-off required.", icon="✅")
+                st.success("**Cùng một lộ trình.** Với các thông số hiện tại, tuyến ngắn nhất cũng chính là tuyến an toàn nhất. Không cần phải hi sinh khoảng cách để đổi lấy an toàn.", icon="✅")
             else:
                 fuel_save_est = dist_diff * 0.06
-                st.info(f"🔀 **The routes diverge.** The safest route adds **{dist_diff:,.0f} nm** (+{pct_longer:.1f}%) compared to the shortest path, but reduces the cumulative risk score by **{risk_diff:,.0f} points**.", icon="🔀")
-                st.markdown(f"• **Shortest route** passes through **higher piracy & conflict zones** (South China Sea Central / Natuna Sea corridor).")
-                st.markdown(f"• **Safest route** favours the **Gulf of Thailand / East Malaysia coastal** passage, which is longer but avoids disputed waters.")
-                st.markdown(f"• Estimated additional fuel consumption for the safer route: ~**{fuel_save_est:,.0f} metric tons** (at 0.06 t/nm avg).")
+                st.info(f"🔀 **Có sự khác biệt.** Tuyến an toàn nhất sẽ dài thêm **{dist_diff:,.0f} nm** (+{pct_longer:.1f}%) so với tuyến ngắn nhất, nhưng làm giảm tổng điểm rủi ro đi **{risk_diff:,.0f} điểm**.", icon="🔀")
+                st.markdown(f"• **Tuyến ngắn nhất** thường đi qua **các vùng có rủi ro cướp biển & tranh chấp cao** (Cụm Biển Đông T.Trung / Biển Natuna).")
+                st.markdown(f"• **Tuyến an toàn nhất** thường ưu tiên qua **Vịnh Thái Lan / Dọc bờ Đông Malaysia**, tuy dài hơn nhưng tránh được các vùng biển diễn biến phức tạp.")
+                st.markdown(f"• Ước tính nhiên liệu tiêu thụ thêm cho tuyến an toàn: ~**{fuel_save_est:,.0f} tấn mét** (ước lượng 0.06 tấn/hải lý).")
 
                 if cargo_type in ("Hazardous (IMDG)", "Liquid (Oil/Gas)"):
-                    st.error("🏷️ **Recommendation for " + cargo_type + " cargo:** Given the elevated risk profile of this cargo type, the **safest route is strongly recommended** despite the extra distance. Insurance premiums and potential incident costs far outweigh fuel savings.", icon="🚨")
+                    st.error("🏷️ **Khuyến nghị cho mặt hàng " + cargo_type + ":** Với đặc tính rủi ro cao của loại hàng hóa này, **rất khuyến nghị nên đi tuyến đường an toàn nhất** bất kể khoảng cách có dài hơn. Phí bảo hiểm và chi phí tiềm ẩn nếu xảy ra sự cố lớn hơn rất nhiều so với phần tiết kiệm nhiên liệu.", icon="🚨")
                 else:
-                    st.warning("🏷️ **Recommendation for " + cargo_type + " cargo:** Both routes are viable. Consider the safest route if **war risk insurance premiums** for the SCS corridor exceed the fuel-cost savings of the shorter path.", icon="💡")
+                    st.warning("🏷️ **Khuyến nghị cho mặt hàng " + cargo_type + ":** Cả hai tuyến đều khả thi. Hãy cân nhắc tuyến an toàn nhất nếu **phụ phí rủi ro chiến tranh / bảo hiểm** đối với khu vực giữa Biển Đông vượt ngoài chi phí tiết kiệm nhiên liệu của tuyến ngắn hơn.", icon="💡")
 
             st.markdown("")
             st.markdown(
-                "<h3 style='color:#e2e8f0;font-weight:700;'>"
-                "📥&ensp;Export Route Data</h3>",
+                "<div style='color:#e2e8f0;font-weight:700;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+                "📥&ensp;Trích Xuất Dữ Liệu</div>",
                 unsafe_allow_html=True,
             )
             exp1, exp2 = st.columns(2)
             with exp1:
                 df_safe = pd.DataFrame(safest_route.segment_details)
                 csv_safe = df_safe.to_csv(index=False).encode("utf-8")
-                st.download_button("⬇️  Download Safest Route CSV", csv_safe, "safest_route.csv", "text/csv", use_container_width=True)
+                st.download_button("⬇️ Tải xuống dữ liệu T.Đường An Toàn (CSV)", csv_safe, "safest_route.csv", "text/csv", use_container_width=True)
             with exp2:
                 df_short = pd.DataFrame(shortest_route.segment_details)
                 csv_short = df_short.to_csv(index=False).encode("utf-8")
-                st.download_button("⬇️  Download Shortest Route CSV", csv_short, "shortest_route.csv", "text/csv", use_container_width=True)
+                st.download_button("⬇️ Tải xuống dữ liệu T.Đường Ngắn Nhất (CSV)", csv_short, "shortest_route.csv", "text/csv", use_container_width=True)
 
         with tab_news:
             st.markdown(
-                "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:12px;'>"
-                "📰&ensp;Live Maritime Intel & News Data</h3>",
+                "<div style='color:#e2e8f0;font-weight:700;margin-bottom:12px;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+                "📰&ensp;Thông Tin & Tin Tức Hàng Hải (Trực Tiếp)</div>",
                 unsafe_allow_html=True,
             )
-            st.caption("Auto-refreshed from global maritime, security, and weather RSS feeds.")
+            st.caption("Tự động làm mới từ các nguồn RSS hàng hải, tin tức an ninh và dự báo thời tiết.")
             
             nc1, nc2, nc3 = st.columns(3)
             
             # Security News
             with nc1:
-                st.markdown("#### 🚨 Security & Conflict")
+                st.markdown("#### 🚨 An Ninh & Tranh Chấp")
                 st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
                 sec_news = fetch_all_rss_category("security", max_items_per_feed=5)
                 for item in sec_news[:5]:
@@ -1515,7 +1515,7 @@ def app_optimizer():
                     
             # Weather News
             with nc2:
-                st.markdown("#### 🌪️ Weather Warnings")
+                st.markdown("#### 🌪️ Cảnh Báo Thời Tiết")
                 st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
                 wea_news = fetch_all_rss_category("weather", max_items_per_feed=5)
                 for item in wea_news[:5]:
@@ -1526,7 +1526,7 @@ def app_optimizer():
                     
             # Economics / Logistics
             with nc3:
-                st.markdown("#### 🚢 Ports & Economics")
+                st.markdown("#### 🚢 Cảng & Kinh Tế")
                 st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
                 eco_news = fetch_all_rss_category("logistics", max_items_per_feed=5)
                 for item in eco_news[:5]:
@@ -1545,35 +1545,35 @@ def app_optimizer():
                 '''
                 <div style="text-align:center;padding:60px 20px;">
                     <div style="font-size:72px;margin-bottom:16px;">🌏</div>
-                    <h2 style="color:#e2e8f0;font-weight:700;margin-bottom:8px;">
-                        Configure Your Voyage
-                    </h2>
+                    <div style="color:#e2e8f0;font-weight:700;margin-bottom:8px;" style="font-size: 2em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">
+                        Cấu Hình Chuyến Đi Của Bạn
+                    </div>
                     <p style="color:#64748b;font-size:15px;max-width:500px;margin:0 auto;">
-                        Set your vessel parameters and cargo details in the sidebar,
-                        then press <strong style="color:#60a5fa;">Find Optimal Route</strong>
-                        to compute the shortest and safest maritime corridors from
-                        Vietnam to your selected destination in Southeast Asia.
+                        Thiết lập các thông số về tàu và hàng hóa trong thanh công cụ bên trái,
+                        sau đó nhấn <strong style="color:#60a5fa;">Tìm Tuyến Đường Tối Ưu</strong>
+                        để hệ thống tính toán hành trình ngắn nhất & an toàn nhất từ
+                        Việt Nam đến cảng đích bạn chọn trong Đông Nam Á.
                     </p>
                     <div style="margin-top:32px;display:flex;justify-content:center;gap:24px;
                                 flex-wrap:wrap;">
                         <div style="text-align:center;">
                             <div style="font-size:28px;">📦</div>
                             <div style="color:#94a3b8;font-size:12px;margin-top:4px;">
-                                Cargo Config
+                                Cấu Hình Tàu
                             </div>
                         </div>
                         <div style="font-size:20px;color:#334155;align-self:center;">→</div>
                         <div style="text-align:center;">
                             <div style="font-size:28px;">🧮</div>
                             <div style="color:#94a3b8;font-size:12px;margin-top:4px;">
-                                Risk Analysis
+                                Phân Tích Rủi Ro
                             </div>
                         </div>
                         <div style="font-size:20px;color:#334155;align-self:center;">→</div>
                         <div style="text-align:center;">
                             <div style="font-size:28px;">🗺️</div>
                             <div style="color:#94a3b8;font-size:12px;margin-top:4px;">
-                                Route Map
+                                Bản Đồ Tuyến
                             </div>
                         </div>
                     </div>
@@ -1585,8 +1585,8 @@ def app_optimizer():
         # Show the base map even before calculation
         st.markdown("")
         st.markdown(
-            "<h3 style='color:#e2e8f0;font-weight:700;'>"
-            "🗺️&ensp;Southeast Asia Maritime Overview</h3>",
+            "<div style='color:#e2e8f0;font-weight:700;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+            "🗺️&ensp;Tổng Quan Khu Vực Hàng Hải Nam Á</div>",
             unsafe_allow_html=True,
         )
         base_map = render_map(None, None, target_node)
@@ -1595,21 +1595,21 @@ def app_optimizer():
         # ── Graph topology preview ──
         st.markdown("")
         st.markdown(
-            "<h3 style='color:#e2e8f0;font-weight:700;'>"
-            "🔗&ensp;Maritime Graph Topology</h3>",
+            "<div style='color:#e2e8f0;font-weight:700;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+            "🔗&ensp;Cấu Trúc Đồ Thị Tuyến Đường</div>",
             unsafe_allow_html=True,
         )
-        st.caption("Available waypoints and route segments in the navigation graph.")
+        st.caption("Các chặng và điểm ngã ba khả dụng được thiết lập trong mô hình hàng hải.")
 
         topo_data = []
         for src, dst, dist, risk in EDGES:
             topo_data.append({
-                "From": WAYPOINTS[src].name,
-                "To": WAYPOINTS[dst].name,
-                "Distance (nm)": dist,
-                "Piracy Risk": f"{risk.piracy:.0%}",
-                "Conflict Risk": f"{risk.conflict:.0%}",
-                "Weather Risk": f"{risk.weather:.0%}",
+                "Từ": WAYPOINTS[src].name,
+                "Đến": WAYPOINTS[dst].name,
+                "Khoảng Cách (nm)": dist,
+                "Rủi ro Cướp biển": f"{risk.piracy:.0%}",
+                "Rủi ro Giao tranh": f"{risk.conflict:.0%}",
+                "Rủi ro Thời tiết": f"{risk.weather:.0%}",
             })
         st.dataframe(
             pd.DataFrame(topo_data),
@@ -1625,9 +1625,9 @@ def app_optimizer():
         '''
         <div style="text-align:center;padding:16px 0 8px 0;">
             <p style="color:#475569;font-size:12px;">
-                Maritime Route Optimizer v1.0 &ensp;·&ensp;
+                Maritime Tối Ưu Tuyến Đường v1.0 &ensp;·&ensp;
                 Built with Streamlit, NetworkX & Folium &ensp;·&ensp;
-                Data is simulated for demonstration purposes
+                Dữ liệu được mô phỏng cho mục đích trình diễn
             </p>
         </div>
         ''',
