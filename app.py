@@ -1103,422 +1103,540 @@ def segment_table_html(segments: List[dict]) -> str:
     """
 
 
+
 # =============================================================================
-# 7. SIDEBAR – USER INPUTS
+# 7. UI PAGES (HOME & OPTIMIZER)
 # =============================================================================
-with st.sidebar:
-    st.markdown(
-        """
-        <div style="text-align:center;padding:10px 0 18px 0;">
-            <span style="font-size:40px;">🚢</span>
-            <h2 style="margin:6px 0 2px 0;font-weight:800;
-                       background:linear-gradient(135deg,#60a5fa,#34d399);
-                       -webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-                Route Optimizer
-            </h2>
-            <p style="color:#64748b;font-size:13px;margin:0;">
-                Vietnam ➜ Southeast Asia
+def app_home():
+    st.markdown('''
+        <style>
+        .home-container {
+            padding: 80px 20px;
+            text-align: center;
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .home-title {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        .home-subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+            line-height: 1.6;
+        }
+        .feature-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.7));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(66, 135, 245, 0.2);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            height: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(66, 135, 245, 0.6);
+            box-shadow: 0 20px 40px rgba(66, 135, 245, 0.2);
+        }
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background: rgba(66, 135, 245, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 20px auto;
+            border: 1px solid rgba(66, 135, 245, 0.3);
+        }
+        </style>
+        
+        <div class="home-container">
+            <h1 class="home-title">Maritime Route Intelligence</h1>
+            <p class="home-subtitle">
+                Hệ thống Tối ưu hóa Tuyến đường biển thông minh. 
+                Cân bằng giữa chi phí vận tải, rủi ro an ninh, và điều kiện thời tiết khắc nghiệt trên khu vực Biển Đông - Đông Nam Á.
             </p>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.divider()
+    ''', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🚀 TRUY CẬP HỆ THỐNG", use_container_width=True, type="primary"):
+            st.session_state.current_page = 'Optimizer'
+            st.rerun()
+            
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    
+    f1, f2, f3 = st.columns(3)
+    f1.markdown('''
+        <div class="feature-card">
+            <div class="icon-circle">🌩️</div>
+            <h3 style="color: #e2e8f0; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Dữ liệu Thời tiết Real-time</h3>
+            <p style="color: #94a3b8; font-size: 14px; line-height: 1.5;">Tích hợp API biển Open-Meteo theo dõi chiều cao sóng thực tế dọc theo tuyến đường, cập nhật tức thời để né bão.</p>
+        </div>
+    ''', unsafe_allow_html=True)
+    
+    f2.markdown('''
+        <div class="feature-card">
+            <div class="icon-circle">🛡️</div>
+            <h3 style="color: #e2e8f0; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Phân tích Rủi ro An ninh</h3>
+            <p style="color: #94a3b8; font-size: 14px; line-height: 1.5;">Tùy chỉnh hệ số nguy hiểm dựa trên mức độ cướp biển, vùng giao tranh và đặc tính nguy hiểm của hàng hóa.</p>
+        </div>
+    ''', unsafe_allow_html=True)
+    
+    f3.markdown('''
+        <div class="feature-card">
+            <div class="icon-circle">📊</div>
+            <h3 style="color: #e2e8f0; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Cân bằng Chi phí & An toàn</h3>
+            <p style="color: #94a3b8; font-size: 14px; line-height: 1.5;">Gợi ý lộ trình qua việc so sánh giữa Tuyến đường Ngắn nhất & Tuyến đường An toàn nhất, ước tính tiêu thụ nhiên liệu.</p>
+        </div>
+    ''', unsafe_allow_html=True)
+    
+    st.markdown('''
+        <div style="text-align: center; padding: 80px 0 20px 0; color: #475569; font-size: 14px;">
+            &copy; 2026 Maritime Route Optimizer | Vietnam ➜ SEA
+        </div>
+    ''', unsafe_allow_html=True)
 
-    st.markdown("#### 🎯 Destination")
-    target_selection = st.selectbox(
-        "Destination Port",
-        list(DESTINATIONS.keys()),
-        index=0,
-        help="Select the destination port in Southeast Asia."
-    )
-    target_node = DESTINATIONS[target_selection]
 
-    st.divider()
-    with st.expander("📦 Vessel & Cargo Parameters", expanded=True):
-        cargo_weight = st.number_input(
-            "Cargo Weight (tons)",
-            min_value=100,
-            max_value=500_000,
-            value=25_000,
-            step=1_000,
-            help="Total weight of cargo in metric tons.",
+def app_optimizer():
+    with st.sidebar:
+        if st.button("🏠 Về Trang Chủ (Home)", use_container_width=True):
+            st.session_state.current_page = 'Home'
+            st.rerun()
+            
+        st.markdown(
+            '''
+            <div style="text-align:center;padding:10px 0 18px 0;">
+                <span style="font-size:40px;">🚢</span>
+                <h2 style="margin:6px 0 2px 0;font-weight:800;
+                           background:linear-gradient(135deg,#60a5fa,#34d399);
+                           -webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+                    Route Optimizer
+                </h2>
+                <p style="color:#64748b;font-size:13px;margin:0;">
+                    Vietnam ➜ Southeast Asia
+                </p>
+            </div>
+            ''',
+            unsafe_allow_html=True,
         )
-        vessel_length = 180
+        st.divider()
 
-        cargo_type = st.selectbox(
-            "Cargo Type",
-            list(CARGO_RISK_MULTIPLIERS.keys()),
-            index=2,
-            help="Select the primary cargo classification.",
+        st.markdown("#### 🎯 Destination")
+        target_selection = st.selectbox(
+            "Destination Port",
+            list(DESTINATIONS.keys()),
+            index=0,
+            help="Select the destination port in Southeast Asia."
         )
+        target_node = DESTINATIONS[target_selection]
 
-    st.divider()
-    use_realtime_weather = st.checkbox("📡 Use Real-Time Weather (Open-Meteo)", value=False, help="Overrides static weather risk with live wave height data.")
-
-    with st.expander("⚙️ Risk Weight Tuning"):
-        st.caption("Adjust how much each risk factor influences route selection.")
-        # These sliders let the user fine-tune (advanced mode)
-        piracy_weight = st.slider("Piracy Sensitivity", 0.0, 2.0, 1.0, 0.1)
-        conflict_weight = st.slider("Conflict Zone Sensitivity", 0.0, 2.0, 1.0, 0.1)
-        weather_weight = st.slider("Bad Weather Sensitivity", 0.0, 2.0, 1.0, 0.1)
-
-    st.divider()
-    run_btn = st.button("🧭  Find Optimal Route", type="primary", use_container_width=True)
-
-
-# =============================================================================
-# 8. MAIN PAGE – HEADER
-# =============================================================================
-st.markdown(
-    """
-    <div style="padding:8px 0 4px 0;">
-        <div class="hero-title">Maritime Route Intelligence</div>
-        <p class="hero-sub">
-            Real-time route optimization & risk assessment&ensp;·&ensp;
-            Ho&nbsp;Chi&nbsp;Minh&nbsp;City&ensp;➜&ensp;Southeast&nbsp;Asia
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-st.markdown("")
-
-
-# =============================================================================
-# 9. EXECUTION – BUILD GRAPH, COMPUTE, RENDER
-# =============================================================================
-if run_btn:
-    # ── Validate inputs ──
-    errors: List[str] = []
-    if cargo_weight <= 0:
-        errors.append("Cargo weight must be a positive number.")
-    if vessel_length <= 0:
-        errors.append("Vessel length must be a positive number.")
-    if errors:
-        for e in errors:
-            st.error(e)
-        st.stop()
-
-    with st.spinner("🔄  Constructing maritime graph and computing optimal routes …"):
-        # ── Fetch Live Weather (if enabled) ──
-        if use_realtime_weather:
-            live_waves = fetch_realtime_weather_data(EDGES)
-            st.toast("✅ Real-time wave heights fetched successfully.")
-        else:
-            live_waves = None
-
-        # ── Apply user risk-weight tuning to the edge risks ──
-        # We temporarily patch the EDGES list with tuned risk values.
-        tuned_edges_backup = []
-        for idx, (src, dst, dist, risk) in enumerate(EDGES):
-            if live_waves is not None and idx < len(live_waves):
-                # map wave height to risk (5m wave = ~1.0 risk)
-                base_weather_risk = min(1.0, max(0.01, live_waves[idx] / 5.0))
-            else:
-                base_weather_risk = risk.weather
-
-            tuned_risk = EdgeRisk(
-                piracy=risk.piracy * piracy_weight,
-                conflict=risk.conflict * conflict_weight,
-                weather=base_weather_risk * weather_weight,
+        st.divider()
+        with st.expander("📦 Vessel & Cargo Parameters", expanded=True):
+            cargo_weight = st.number_input(
+                "Cargo Weight (tons)",
+                min_value=100,
+                max_value=500_000,
+                value=25_000,
+                step=1_000,
+                help="Total weight of cargo in metric tons.",
             )
-            tuned_edges_backup.append(EDGES[idx])
-            EDGES[idx] = (src, dst, dist, tuned_risk)
+            vessel_length = 180
 
-        # Build graphs
-        G_dist, G_risk = build_maritime_graph(cargo_weight, vessel_length, cargo_type)
+            cargo_type = st.selectbox(
+                "Cargo Type",
+                list(CARGO_RISK_MULTIPLIERS.keys()),
+                index=2,
+                help="Select the primary cargo classification.",
+            )
 
-        # Restore original edges
-        for idx, original in enumerate(tuned_edges_backup):
-            EDGES[idx] = original
+        st.divider()
+        use_realtime_weather = st.checkbox("📡 Use Real-Time Weather (Open-Meteo)", value=False, help="Overrides static weather risk with live wave height data.")
 
-        # Compute routes
-        shortest_route = compute_route(G_dist, target=target_node)
-        safest_route = compute_route(G_risk, target=target_node)
+        with st.expander("⚙️ Risk Weight Tuning"):
+            st.caption("Adjust how much each risk factor influences route selection.")
+            # These sliders let the user fine-tune (advanced mode)
+            piracy_weight = st.slider("Piracy Sensitivity", 0.0, 2.0, 1.0, 0.1)
+            conflict_weight = st.slider("Conflict Zone Sensitivity", 0.0, 2.0, 1.0, 0.1)
+            weather_weight = st.slider("Bad Weather Sensitivity", 0.0, 2.0, 1.0, 0.1)
 
-    if shortest_route is None or safest_route is None:
-        st.error(
-            f"⚠️  Could not find a valid route between Ho Chi Minh City and the selected destination. "
-            "Please check the maritime graph configuration."
-        )
-        st.stop()
+        st.divider()
+        run_btn = st.button("🧭  Find Optimal Route", type="primary", use_container_width=True)
 
-    # ── Compute Shortest Risk correctly for comparisons ──
-    G_dist_check, G_risk_check = build_maritime_graph(cargo_weight, vessel_length, cargo_type)
-    shortest_risk_on_risk_graph = 0.0
-    for i in range(len(shortest_route.path) - 1):
-        edge = G_risk_check.edges.get((shortest_route.path[i], shortest_route.path[i + 1]), {})
-        shortest_risk_on_risk_graph += edge.get("risk_score", 0)
-        
-    risk_diff = shortest_risk_on_risk_graph - safest_route.total_risk_score if shortest_risk_on_risk_graph > safest_route.total_risk_score else 0
-    dist_diff = safest_route.total_distance - shortest_route.total_distance
-    pct_longer = (dist_diff / max(shortest_route.total_distance, 1)) * 100
-
-    # ── KPI Row ──
-    st.markdown("---")
+    # =============================================================================
+    # 8. MAIN PAGE – HEADER
+    # =============================================================================
     st.markdown(
-        "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:2px;'>"
-        "📊&ensp;Key Performance Indicators</h3>",
+        '''
+        <div style="padding:8px 0 4px 0;">
+            <div class="hero-title">Maritime Route Intelligence</div>
+            <p class="hero-sub">
+                Real-time route optimization & risk assessment&ensp;·&ensp;
+                Ho&nbsp;Chi&nbsp;Minh&nbsp;City&ensp;➜&ensp;Southeast&nbsp;Asia
+            </p>
+        </div>
+        ''',
         unsafe_allow_html=True,
     )
+    st.markdown("")
 
-    k1, k2, k3, k4 = st.columns(4)
-    with k1:
-        st.metric(
-            label="🟢 Safest Distance", 
-            value=f"{safest_route.total_distance:,.0f} nm",
-            delta=f"{dist_diff:,.0f} nm longer",
-            delta_color="inverse" if dist_diff > 0 else "off"
-        )
-    with k2:
-        st.metric(
-            label="🛡️ Safest Risk Score", 
-            value=f"{safest_route.total_risk_score:,.0f}",
-            delta=f"- {risk_diff:,.0f} risk pts",
-            delta_color="normal"
-        )
-    with k3:
-        st.metric(
-            label="🔴 Shortest Distance", 
-            value=f"{shortest_route.total_distance:,.0f} nm"
-        )
-    with k4:
-        st.metric(
-            label="⚠️ Shortest Risk Score", 
-            value=f"{shortest_risk_on_risk_graph:,.0f}"
-        )
+    # =============================================================================
+    # 9. EXECUTION – BUILD GRAPH, COMPUTE, RENDER
+    # =============================================================================
+    if run_btn:
+        # ── Validate inputs ──
+        errors: List[str] = []
+        if cargo_weight <= 0:
+            errors.append("Cargo weight must be a positive number.")
+        if vessel_length <= 0:
+            errors.append("Vessel length must be a positive number.")
+        if errors:
+            for e in errors:
+                st.error(e)
+            st.stop()
 
-    st.markdown("---")
+        with st.spinner("🔄  Constructing maritime graph and computing optimal routes …"):
+            # ── Fetch Live Weather (if enabled) ──
+            if use_realtime_weather:
+                live_waves = fetch_realtime_weather_data(EDGES)
+                st.toast("✅ Real-time wave heights fetched successfully.")
+            else:
+                live_waves = None
 
-    # ── TABS ──
-    tab_map, tab_compare, tab_ai, tab_news = st.tabs([
-        "🗺️ Interactive View", 
-        "📋 Route Details", 
-        "💡 Recommendations & Export",
-        "📰 Live Intel & News"
-    ])
+            # ── Apply user risk-weight tuning to the edge risks ──
+            # We temporarily patch the EDGES list with tuned risk values.
+            tuned_edges_backup = []
+            for idx, (src, dst, dist, risk) in enumerate(EDGES):
+                if live_waves is not None and idx < len(live_waves):
+                    # map wave height to risk (5m wave = ~1.0 risk)
+                    base_weather_risk = min(1.0, max(0.01, live_waves[idx] / 5.0))
+                else:
+                    base_weather_risk = risk.weather
 
-    with tab_map:
+                tuned_risk = EdgeRisk(
+                    piracy=risk.piracy * piracy_weight,
+                    conflict=risk.conflict * conflict_weight,
+                    weather=base_weather_risk * weather_weight,
+                )
+                tuned_edges_backup.append(EDGES[idx])
+                EDGES[idx] = (src, dst, dist, tuned_risk)
+
+            # Build graphs
+            G_dist, G_risk = build_maritime_graph(cargo_weight, vessel_length, cargo_type)
+
+            # Restore original edges
+            for idx, original in enumerate(tuned_edges_backup):
+                EDGES[idx] = original
+
+            # Compute routes
+            shortest_route = compute_route(G_dist, target=target_node)
+            safest_route = compute_route(G_risk, target=target_node)
+
+        if shortest_route is None or safest_route is None:
+            st.error(
+                f"⚠️  Could not find a valid route between Ho Chi Minh City and the selected destination. "
+                "Please check the maritime graph configuration."
+            )
+            st.stop()
+
+        # ── Compute Shortest Risk correctly for comparisons ──
+        G_dist_check, G_risk_check = build_maritime_graph(cargo_weight, vessel_length, cargo_type)
+        shortest_risk_on_risk_graph = 0.0
+        for i in range(len(shortest_route.path) - 1):
+            edge = G_risk_check.edges.get((shortest_route.path[i], shortest_route.path[i + 1]), {})
+            shortest_risk_on_risk_graph += edge.get("risk_score", 0)
+            
+        risk_diff = shortest_risk_on_risk_graph - safest_route.total_risk_score if shortest_risk_on_risk_graph > safest_route.total_risk_score else 0
+        dist_diff = safest_route.total_distance - shortest_route.total_distance
+        pct_longer = (dist_diff / max(shortest_route.total_distance, 1)) * 100
+
+        # ── KPI Row ──
+        st.markdown("---")
         st.markdown(
             "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:2px;'>"
-            "🗺️&ensp;Interactive Route Map</h3>",
+            "📊&ensp;Key Performance Indicators</h3>",
             unsafe_allow_html=True,
         )
-        st.caption("Red dashed = Shortest Distance  ·  Green solid = Safest Optimal  ·  Click markers for details")
-        route_map = render_map(shortest_route, safest_route, target_node)
-        st.markdown('<div class="map-container">', unsafe_allow_html=True)
-        components.html(route_map._repr_html_(), height=520)
-        st.markdown("</div>", unsafe_allow_html=True)
 
-    with tab_compare:
-        col_safe, col_short = st.columns(2)
+        k1, k2, k3, k4 = st.columns(4)
+        with k1:
+            st.metric(
+                label="🟢 Safest Distance", 
+                value=f"{safest_route.total_distance:,.0f} nm",
+                delta=f"{dist_diff:,.0f} nm longer",
+                delta_color="inverse" if dist_diff > 0 else "off"
+            )
+        with k2:
+            st.metric(
+                label="🛡️ Safest Risk Score", 
+                value=f"{safest_route.total_risk_score:,.0f}",
+                delta=f"- {risk_diff:,.0f} risk pts",
+                delta_color="normal"
+            )
+        with k3:
+            st.metric(
+                label="🔴 Shortest Distance", 
+                value=f"{shortest_route.total_distance:,.0f} nm"
+            )
+        with k4:
+            st.metric(
+                label="⚠️ Shortest Risk Score", 
+                value=f"{shortest_risk_on_risk_graph:,.0f}"
+            )
 
-        with col_safe:
+        st.markdown("---")
+
+        # ── TABS ──
+        tab_map, tab_compare, tab_ai, tab_news = st.tabs([
+            "🗺️ Interactive View", 
+            "📋 Route Details", 
+            "💡 Recommendations & Export",
+            "📰 Live Intel & News"
+        ])
+
+        with tab_map:
             st.markdown(
-                '<div class="route-compare">'
-                '<h3>🟢 Safest Optimal Route</h3>',
+                "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:2px;'>"
+                "🗺️&ensp;Interactive Route Map</h3>",
                 unsafe_allow_html=True,
             )
-            st.success(f"**Pathway:** {' → '.join(wp.name for wp in safest_route.waypoints)}", icon="🟢")
-            m1, m2, m3 = st.columns(3)
-            m1.metric("Distance", f"{safest_route.total_distance:,.1f} nm")
-            m2.metric("Risk Score", f"{safest_route.total_risk_score:,.1f}")
-            eta_safe = safest_route.total_distance / 14
-            m3.metric("Transit ETA", f"{eta_safe:,.1f} hrs")
-            
-            with st.expander("📍 View Segment Breakdown", expanded=False):
-                st.markdown(segment_table_html(safest_route.segment_details), unsafe_allow_html=True)
+            st.caption("Red dashed = Shortest Distance  ·  Green solid = Safest Optimal  ·  Click markers for details")
+            route_map = render_map(shortest_route, safest_route, target_node)
+            st.markdown('<div class="map-container">', unsafe_allow_html=True)
+            components.html(route_map._repr_html_(), height=520)
             st.markdown("</div>", unsafe_allow_html=True)
 
-        with col_short:
-            st.markdown(
-                '<div class="route-compare">'
-                '<h3>🔴 Shortest Distance Route</h3>',
-                unsafe_allow_html=True,
-            )
-            st.warning(f"**Pathway:** {' → '.join(wp.name for wp in shortest_route.waypoints)}", icon="🔴")
-            m1, m2, m3 = st.columns(3)
-            m1.metric("Distance", f"{shortest_route.total_distance:,.1f} nm")
-            m2.metric("Risk Score", f"{shortest_risk_on_risk_graph:,.1f}")
-            eta_short = shortest_route.total_distance / 14
-            m3.metric("Transit ETA", f"{eta_short:,.1f} hrs")
-            
-            with st.expander("📍 View Segment Breakdown", expanded=False):
-                st.markdown(segment_table_html(shortest_route.segment_details), unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
+        with tab_compare:
+            col_safe, col_short = st.columns(2)
 
-    with tab_ai:
-        same_route = shortest_route.path == safest_route.path
-        if same_route:
-            st.success("**Both routes are identical.** Under the current parameters, the shortest distance route is already the safest option. No trade-off required.", icon="✅")
-        else:
-            fuel_save_est = dist_diff * 0.06
-            st.info(f"🔀 **The routes diverge.** The safest route adds **{dist_diff:,.0f} nm** (+{pct_longer:.1f}%) compared to the shortest path, but reduces the cumulative risk score by **{risk_diff:,.0f} points**.", icon="🔀")
-            st.markdown(f"• **Shortest route** passes through **higher piracy & conflict zones** (South China Sea Central / Natuna Sea corridor).")
-            st.markdown(f"• **Safest route** favours the **Gulf of Thailand / East Malaysia coastal** passage, which is longer but avoids disputed waters.")
-            st.markdown(f"• Estimated additional fuel consumption for the safer route: ~**{fuel_save_est:,.0f} metric tons** (at 0.06 t/nm avg).")
+            with col_safe:
+                st.markdown(
+                    '<div class="route-compare">'
+                    '<h3>🟢 Safest Optimal Route</h3>',
+                    unsafe_allow_html=True,
+                )
+                st.success(f"**Pathway:** {' → '.join(wp.name for wp in safest_route.waypoints)}", icon="🟢")
+                m1, m2, m3 = st.columns(3)
+                m1.metric("Distance", f"{safest_route.total_distance:,.1f} nm")
+                m2.metric("Risk Score", f"{safest_route.total_risk_score:,.1f}")
+                eta_safe = safest_route.total_distance / 14
+                m3.metric("Transit ETA", f"{eta_safe:,.1f} hrs")
+                
+                with st.expander("📍 View Segment Breakdown", expanded=False):
+                    st.markdown(segment_table_html(safest_route.segment_details), unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
 
-            if cargo_type in ("Hazardous (IMDG)", "Liquid (Oil/Gas)"):
-                st.error("🏷️ **Recommendation for " + cargo_type + " cargo:** Given the elevated risk profile of this cargo type, the **safest route is strongly recommended** despite the extra distance. Insurance premiums and potential incident costs far outweigh fuel savings.", icon="🚨")
+            with col_short:
+                st.markdown(
+                    '<div class="route-compare">'
+                    '<h3>🔴 Shortest Distance Route</h3>',
+                    unsafe_allow_html=True,
+                )
+                st.warning(f"**Pathway:** {' → '.join(wp.name for wp in shortest_route.waypoints)}", icon="🔴")
+                m1, m2, m3 = st.columns(3)
+                m1.metric("Distance", f"{shortest_route.total_distance:,.1f} nm")
+                m2.metric("Risk Score", f"{shortest_risk_on_risk_graph:,.1f}")
+                eta_short = shortest_route.total_distance / 14
+                m3.metric("Transit ETA", f"{eta_short:,.1f} hrs")
+                
+                with st.expander("📍 View Segment Breakdown", expanded=False):
+                    st.markdown(segment_table_html(shortest_route.segment_details), unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+
+        with tab_ai:
+            same_route = shortest_route.path == safest_route.path
+            if same_route:
+                st.success("**Both routes are identical.** Under the current parameters, the shortest distance route is already the safest option. No trade-off required.", icon="✅")
             else:
-                st.warning("🏷️ **Recommendation for " + cargo_type + " cargo:** Both routes are viable. Consider the safest route if **war risk insurance premiums** for the SCS corridor exceed the fuel-cost savings of the shorter path.", icon="💡")
+                fuel_save_est = dist_diff * 0.06
+                st.info(f"🔀 **The routes diverge.** The safest route adds **{dist_diff:,.0f} nm** (+{pct_longer:.1f}%) compared to the shortest path, but reduces the cumulative risk score by **{risk_diff:,.0f} points**.", icon="🔀")
+                st.markdown(f"• **Shortest route** passes through **higher piracy & conflict zones** (South China Sea Central / Natuna Sea corridor).")
+                st.markdown(f"• **Safest route** favours the **Gulf of Thailand / East Malaysia coastal** passage, which is longer but avoids disputed waters.")
+                st.markdown(f"• Estimated additional fuel consumption for the safer route: ~**{fuel_save_est:,.0f} metric tons** (at 0.06 t/nm avg).")
 
+                if cargo_type in ("Hazardous (IMDG)", "Liquid (Oil/Gas)"):
+                    st.error("🏷️ **Recommendation for " + cargo_type + " cargo:** Given the elevated risk profile of this cargo type, the **safest route is strongly recommended** despite the extra distance. Insurance premiums and potential incident costs far outweigh fuel savings.", icon="🚨")
+                else:
+                    st.warning("🏷️ **Recommendation for " + cargo_type + " cargo:** Both routes are viable. Consider the safest route if **war risk insurance premiums** for the SCS corridor exceed the fuel-cost savings of the shorter path.", icon="💡")
+
+            st.markdown("")
+            st.markdown(
+                "<h3 style='color:#e2e8f0;font-weight:700;'>"
+                "📥&ensp;Export Route Data</h3>",
+                unsafe_allow_html=True,
+            )
+            exp1, exp2 = st.columns(2)
+            with exp1:
+                df_safe = pd.DataFrame(safest_route.segment_details)
+                csv_safe = df_safe.to_csv(index=False).encode("utf-8")
+                st.download_button("⬇️  Download Safest Route CSV", csv_safe, "safest_route.csv", "text/csv", use_container_width=True)
+            with exp2:
+                df_short = pd.DataFrame(shortest_route.segment_details)
+                csv_short = df_short.to_csv(index=False).encode("utf-8")
+                st.download_button("⬇️  Download Shortest Route CSV", csv_short, "shortest_route.csv", "text/csv", use_container_width=True)
+
+        with tab_news:
+            st.markdown(
+                "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:12px;'>"
+                "📰&ensp;Live Maritime Intel & News Data</h3>",
+                unsafe_allow_html=True,
+            )
+            st.caption("Auto-refreshed from global maritime, security, and weather RSS feeds.")
+            
+            nc1, nc2, nc3 = st.columns(3)
+            
+            # Security News
+            with nc1:
+                st.markdown("#### 🚨 Security & Conflict")
+                st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
+                sec_news = fetch_all_rss_category("security", max_items_per_feed=5)
+                for item in sec_news[:5]:
+                    st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
+                    st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
+                if not sec_news:
+                    st.info("Không có tin tức an ninh biển Đông tuần này.")
+                    
+            # Weather News
+            with nc2:
+                st.markdown("#### 🌪️ Weather Warnings")
+                st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
+                wea_news = fetch_all_rss_category("weather", max_items_per_feed=5)
+                for item in wea_news[:5]:
+                    st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
+                    st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
+                if not wea_news:
+                    st.info("Thời tiết vùng an toàn, không có cảnh báo tuần này.")
+                    
+            # Economics / Logistics
+            with nc3:
+                st.markdown("#### 🚢 Ports & Economics")
+                st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
+                eco_news = fetch_all_rss_category("logistics", max_items_per_feed=5)
+                for item in eco_news[:5]:
+                    st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
+                    st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
+                if not eco_news:
+                    st.info("Không có tin tức chuỗi cung ứng Đông Nam Á.")
+
+
+    else:
+        # ── Welcome state (no route calculated yet) ──
         st.markdown("")
-        st.markdown(
-            "<h3 style='color:#e2e8f0;font-weight:700;'>"
-            "📥&ensp;Export Route Data</h3>",
-            unsafe_allow_html=True,
-        )
-        exp1, exp2 = st.columns(2)
-        with exp1:
-            df_safe = pd.DataFrame(safest_route.segment_details)
-            csv_safe = df_safe.to_csv(index=False).encode("utf-8")
-            st.download_button("⬇️  Download Safest Route CSV", csv_safe, "safest_route.csv", "text/csv", use_container_width=True)
-        with exp2:
-            df_short = pd.DataFrame(shortest_route.segment_details)
-            csv_short = df_short.to_csv(index=False).encode("utf-8")
-            st.download_button("⬇️  Download Shortest Route CSV", csv_short, "shortest_route.csv", "text/csv", use_container_width=True)
-
-    with tab_news:
-        st.markdown(
-            "<h3 style='color:#e2e8f0;font-weight:700;margin-bottom:12px;'>"
-            "📰&ensp;Live Maritime Intel & News Data</h3>",
-            unsafe_allow_html=True,
-        )
-        st.caption("Auto-refreshed from global maritime, security, and weather RSS feeds.")
-        
-        nc1, nc2, nc3 = st.columns(3)
-        
-        # Security News
-        with nc1:
-            st.markdown("#### 🚨 Security & Conflict")
-            st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
-            sec_news = fetch_all_rss_category("security", max_items_per_feed=5)
-            for item in sec_news[:5]:
-                st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
-                st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
-            if not sec_news:
-                st.info("Không có tin tức an ninh biển Đông tuần này.")
-                
-        # Weather News
-        with nc2:
-            st.markdown("#### 🌪️ Weather Warnings")
-            st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
-            wea_news = fetch_all_rss_category("weather", max_items_per_feed=5)
-            for item in wea_news[:5]:
-                st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
-                st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
-            if not wea_news:
-                st.info("Thời tiết vùng an toàn, không có cảnh báo tuần này.")
-                
-        # Economics / Logistics
-        with nc3:
-            st.markdown("#### 🚢 Ports & Economics")
-            st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
-            eco_news = fetch_all_rss_category("logistics", max_items_per_feed=5)
-            for item in eco_news[:5]:
-                st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
-                st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
-            if not eco_news:
-                st.info("Không có tin tức chuỗi cung ứng Đông Nam Á.")
-
-
-else:
-    # ── Welcome state (no route calculated yet) ──
-    st.markdown("")
-    w1, w2, w3 = st.columns([1, 2, 1])
-    with w2:
-        st.markdown(
-            """
-            <div style="text-align:center;padding:60px 20px;">
-                <div style="font-size:72px;margin-bottom:16px;">🌏</div>
-                <h2 style="color:#e2e8f0;font-weight:700;margin-bottom:8px;">
-                    Configure Your Voyage
-                </h2>
-                <p style="color:#64748b;font-size:15px;max-width:500px;margin:0 auto;">
-                    Set your vessel parameters and cargo details in the sidebar,
-                    then press <strong style="color:#60a5fa;">Find Optimal Route</strong>
-                    to compute the shortest and safest maritime corridors from
-                    Vietnam to your selected destination in Southeast Asia.
-                </p>
-                <div style="margin-top:32px;display:flex;justify-content:center;gap:24px;
-                            flex-wrap:wrap;">
-                    <div style="text-align:center;">
-                        <div style="font-size:28px;">📦</div>
-                        <div style="color:#94a3b8;font-size:12px;margin-top:4px;">
-                            Cargo Config
+        w1, w2, w3 = st.columns([1, 2, 1])
+        with w2:
+            st.markdown(
+                '''
+                <div style="text-align:center;padding:60px 20px;">
+                    <div style="font-size:72px;margin-bottom:16px;">🌏</div>
+                    <h2 style="color:#e2e8f0;font-weight:700;margin-bottom:8px;">
+                        Configure Your Voyage
+                    </h2>
+                    <p style="color:#64748b;font-size:15px;max-width:500px;margin:0 auto;">
+                        Set your vessel parameters and cargo details in the sidebar,
+                        then press <strong style="color:#60a5fa;">Find Optimal Route</strong>
+                        to compute the shortest and safest maritime corridors from
+                        Vietnam to your selected destination in Southeast Asia.
+                    </p>
+                    <div style="margin-top:32px;display:flex;justify-content:center;gap:24px;
+                                flex-wrap:wrap;">
+                        <div style="text-align:center;">
+                            <div style="font-size:28px;">📦</div>
+                            <div style="color:#94a3b8;font-size:12px;margin-top:4px;">
+                                Cargo Config
+                            </div>
                         </div>
-                    </div>
-                    <div style="font-size:20px;color:#334155;align-self:center;">→</div>
-                    <div style="text-align:center;">
-                        <div style="font-size:28px;">🧮</div>
-                        <div style="color:#94a3b8;font-size:12px;margin-top:4px;">
-                            Risk Analysis
+                        <div style="font-size:20px;color:#334155;align-self:center;">→</div>
+                        <div style="text-align:center;">
+                            <div style="font-size:28px;">🧮</div>
+                            <div style="color:#94a3b8;font-size:12px;margin-top:4px;">
+                                Risk Analysis
+                            </div>
                         </div>
-                    </div>
-                    <div style="font-size:20px;color:#334155;align-self:center;">→</div>
-                    <div style="text-align:center;">
-                        <div style="font-size:28px;">🗺️</div>
-                        <div style="color:#94a3b8;font-size:12px;margin-top:4px;">
-                            Route Map
+                        <div style="font-size:20px;color:#334155;align-self:center;">→</div>
+                        <div style="text-align:center;">
+                            <div style="font-size:28px;">🗺️</div>
+                            <div style="color:#94a3b8;font-size:12px;margin-top:4px;">
+                                Route Map
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            """,
+                ''',
+                unsafe_allow_html=True,
+            )
+
+        # Show the base map even before calculation
+        st.markdown("")
+        st.markdown(
+            "<h3 style='color:#e2e8f0;font-weight:700;'>"
+            "🗺️&ensp;Southeast Asia Maritime Overview</h3>",
             unsafe_allow_html=True,
         )
+        base_map = render_map(None, None, target_node)
+        components.html(base_map._repr_html_(), height=450)
 
-    # Show the base map even before calculation
-    st.markdown("")
+        # ── Graph topology preview ──
+        st.markdown("")
+        st.markdown(
+            "<h3 style='color:#e2e8f0;font-weight:700;'>"
+            "🔗&ensp;Maritime Graph Topology</h3>",
+            unsafe_allow_html=True,
+        )
+        st.caption("Available waypoints and route segments in the navigation graph.")
+
+        topo_data = []
+        for src, dst, dist, risk in EDGES:
+            topo_data.append({
+                "From": WAYPOINTS[src].name,
+                "To": WAYPOINTS[dst].name,
+                "Distance (nm)": dist,
+                "Piracy Risk": f"{risk.piracy:.0%}",
+                "Conflict Risk": f"{risk.conflict:.0%}",
+                "Weather Risk": f"{risk.weather:.0%}",
+            })
+        st.dataframe(
+            pd.DataFrame(topo_data),
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    # =============================================================================
+    # 10. FOOTER
+    # =============================================================================
+    st.markdown("---")
     st.markdown(
-        "<h3 style='color:#e2e8f0;font-weight:700;'>"
-        "🗺️&ensp;Southeast Asia Maritime Overview</h3>",
+        '''
+        <div style="text-align:center;padding:16px 0 8px 0;">
+            <p style="color:#475569;font-size:12px;">
+                Maritime Route Optimizer v1.0 &ensp;·&ensp;
+                Built with Streamlit, NetworkX & Folium &ensp;·&ensp;
+                Data is simulated for demonstration purposes
+            </p>
+        </div>
+        ''',
         unsafe_allow_html=True,
     )
-    base_map = render_map(None, None, target_node)
-    components.html(base_map._repr_html_(), height=450)
 
-    # ── Graph topology preview ──
-    st.markdown("")
-    st.markdown(
-        "<h3 style='color:#e2e8f0;font-weight:700;'>"
-        "🔗&ensp;Maritime Graph Topology</h3>",
-        unsafe_allow_html=True,
-    )
-    st.caption("Available waypoints and route segments in the navigation graph.")
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = 'Home'
 
-    topo_data = []
-    for src, dst, dist, risk in EDGES:
-        topo_data.append({
-            "From": WAYPOINTS[src].name,
-            "To": WAYPOINTS[dst].name,
-            "Distance (nm)": dist,
-            "Piracy Risk": f"{risk.piracy:.0%}",
-            "Conflict Risk": f"{risk.conflict:.0%}",
-            "Weather Risk": f"{risk.weather:.0%}",
-        })
-    st.dataframe(
-        pd.DataFrame(topo_data),
-        use_container_width=True,
-        hide_index=True,
-    )
-
-
-# =============================================================================
-# 10. FOOTER
-# =============================================================================
-st.markdown("---")
-st.markdown(
-    """
-    <div style="text-align:center;padding:16px 0 8px 0;">
-        <p style="color:#475569;font-size:12px;">
-            Maritime Route Optimizer v1.0 &ensp;·&ensp;
-            Built with Streamlit, NetworkX & Folium &ensp;·&ensp;
-            Data is simulated for demonstration purposes
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+if st.session_state.current_page == 'Home':
+    app_home()
+else:
+    app_optimizer()
