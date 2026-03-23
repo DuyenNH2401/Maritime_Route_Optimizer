@@ -24,6 +24,7 @@ import folium
 import streamlit.components.v1 as components
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Optional
+import requests
 
 
 # =============================================================================
@@ -643,7 +644,48 @@ CARGO_RISK_MULTIPLIERS: Dict[str, Dict[str, float]] = {
 
 
 # =============================================================================
-# 3. GRAPH CONSTRUCTION
+# 3. REALTIME WEATHER DATA
+# =============================================================================
+@st.cache_data(ttl=1800, show_spinner=False)
+def fetch_realtime_weather_data(edges_list: List[Tuple]) -> List[float]:
+    """
+    Fetch real-time wave heights from Open-Meteo for the midpoints of each edge.
+    Returns a list of wave heights (in meters), or fallback values if it fails.
+    """
+    lats = []
+    lons = []
+    
+    for src, dst, dist, risk in edges_list:
+        mid_lat = (WAYPOINTS[src].lat + WAYPOINTS[dst].lat) / 2.0
+        mid_lon = (WAYPOINTS[src].lon + WAYPOINTS[dst].lon) / 2.0
+        lats.append(round(mid_lat, 4))
+        lons.append(round(mid_lon, 4))
+
+    lat_str = ",".join(map(str, lats))
+    lon_str = ",".join(map(str, lons))
+    url = f"https://marine-api.open-meteo.com/v1/marine?latitude={lat_str}&longitude={lon_str}&current=wave_height"
+    
+    try:
+        response = requests.get(url, timeout=10)
+        data = response.json()
+        wave_heights = []
+        
+        # open-meteo returns a list of objects if length > 1
+        if isinstance(data, list):
+            for d in data:
+                wh = d.get("current", {}).get("wave_height")
+                wave_heights.append(wh if wh is not None else 1.0)
+        else:
+            wh = data.get("current", {}).get("wave_height")
+            wave_heights.append(wh if wh is not None else 1.0)
+            
+        return wave_heights
+    except Exception as e:
+        print("Error fetching weather data:", e)
+        return [1.0] * len(edges_list)
+
+# =============================================================================
+# 3.5. GRAPH CONSTRUCTION
 # =============================================================================
 def build_maritime_graph(
     cargo_weight: float,
@@ -1030,6 +1072,8 @@ with st.sidebar:
         )
 
     st.divider()
+    use_realtime_weather = st.checkbox("📡 Use Real-Time Weather (Open-Meteo)", value=False, help="Overrides static weather risk with live wave height data.")
+
     with st.expander("⚙️ Risk Weight Tuning"):
         st.caption("Adjust how much each risk factor influences route selection.")
         # These sliders let the user fine-tune (advanced mode)
@@ -1075,14 +1119,27 @@ if run_btn:
         st.stop()
 
     with st.spinner("🔄  Constructing maritime graph and computing optimal routes …"):
+        # ── Fetch Live Weather (if enabled) ──
+        if use_realtime_weather:
+            live_waves = fetch_realtime_weather_data(EDGES)
+            st.toast("✅ Real-time wave heights fetched successfully.")
+        else:
+            live_waves = None
+
         # ── Apply user risk-weight tuning to the edge risks ──
         # We temporarily patch the EDGES list with tuned risk values.
         tuned_edges_backup = []
         for idx, (src, dst, dist, risk) in enumerate(EDGES):
+            if live_waves is not None and idx < len(live_waves):
+                # map wave height to risk (5m wave = ~1.0 risk)
+                base_weather_risk = min(1.0, max(0.01, live_waves[idx] / 5.0))
+            else:
+                base_weather_risk = risk.weather
+
             tuned_risk = EdgeRisk(
                 piracy=risk.piracy * piracy_weight,
                 conflict=risk.conflict * conflict_weight,
-                weather=risk.weather * weather_weight,
+                weather=base_weather_risk * weather_weight,
             )
             tuned_edges_backup.append(EDGES[idx])
             EDGES[idx] = (src, dst, dist, tuned_risk)
