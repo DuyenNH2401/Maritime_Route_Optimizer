@@ -1170,8 +1170,6 @@ def app_home():
         <div class="home-container">
             <div class="home-title">Maritime Route Intelligence</div>
             <p class="home-subtitle">
-                Hệ thống Tối ưu hóa Tuyến đường biển thông minh. 
-                Cân bằng giữa chi phí vận tải, rủi ro an ninh, và điều kiện thời tiết khắc nghiệt trên khu vực Biển&nbsp;Đông&nbsp;-&nbsp;Đông&nbsp;Nam&nbsp;Á.
             </p>
         </div>
     ''', unsafe_allow_html=True)
