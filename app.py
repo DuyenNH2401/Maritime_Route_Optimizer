@@ -1370,7 +1370,7 @@ def app_optimizer():
         # ── KPI Row ──
         st.markdown("---")
         st.markdown(
-            "<div style='color:#e2e8f0;font-weight:700;margin-bottom:2px;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+            "<div style='color:#e2e8f0;font-weight:700;margin-bottom:2px;' style=\"\1\">"
             "📊&ensp;Chỉ Số Hiệu Suất (KPI)</div>",
             unsafe_allow_html=True,
         )
@@ -1413,7 +1413,7 @@ def app_optimizer():
 
         with tab_map:
             st.markdown(
-                "<div style='color:#e2e8f0;font-weight:700;margin-bottom:2px;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+                "<div style='color:#e2e8f0;font-weight:700;margin-bottom:2px;' style=\"\1\">"
                 "🗺️&ensp;Bản Đồ Tuyến Đường Tương Tác</div>",
                 unsafe_allow_html=True,
             )
@@ -1429,7 +1429,7 @@ def app_optimizer():
             with col_safe:
                 st.markdown(
                     '<div class="route-compare">'
-                    '<div style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">🟢 Tuyến An Toàn Nhất Route</div>',
+                    '<div style=\"\1\">🟢 Tuyến An Toàn Nhất Route</div>',
                     unsafe_allow_html=True,
                 )
                 st.success(f"**Lộ trình:** {' → '.join(wp.name for wp in safest_route.waypoints)}", icon="🟢")
@@ -1446,7 +1446,7 @@ def app_optimizer():
             with col_short:
                 st.markdown(
                     '<div class="route-compare">'
-                    '<div style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">🔴 Độ Dài Tuyến Ngắn Nhất Route</div>',
+                    '<div style=\"\1\">🔴 Độ Dài Tuyến Ngắn Nhất Route</div>',
                     unsafe_allow_html=True,
                 )
                 st.warning(f"**Lộ trình:** {' → '.join(wp.name for wp in shortest_route.waypoints)}", icon="🔴")
@@ -1478,7 +1478,7 @@ def app_optimizer():
 
             st.markdown("")
             st.markdown(
-                "<div style='color:#e2e8f0;font-weight:700;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+                "<div style='color:#e2e8f0;font-weight:700;' style=\"\1\">"
                 "📥&ensp;Trích Xuất Dữ Liệu</div>",
                 unsafe_allow_html=True,
             )
@@ -1494,7 +1494,7 @@ def app_optimizer():
 
         with tab_news:
             st.markdown(
-                "<div style='color:#e2e8f0;font-weight:700;margin-bottom:12px;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+                "<div style='color:#e2e8f0;font-weight:700;margin-bottom:12px;' style=\"\1\">"
                 "📰&ensp;Thông Tin & Tin Tức Hàng Hải (Trực Tiếp)</div>",
                 unsafe_allow_html=True,
             )
@@ -1545,7 +1545,7 @@ def app_optimizer():
                 '''
                 <div style="text-align:center;padding:60px 20px;">
                     <div style="font-size:72px;margin-bottom:16px;">🌏</div>
-                    <div style="color:#e2e8f0;font-weight:700;margin-bottom:8px;" style="font-size: 2em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">
+                    <div style="color:#e2e8f0;font-weight:700;margin-bottom:8px;" style=\"\1\">
                         Cấu Hình Chuyến Đi Của Bạn
                     </div>
                     <p style="color:#64748b;font-size:15px;max-width:500px;margin:0 auto;">
@@ -1585,7 +1585,7 @@ def app_optimizer():
         # Show the base map even before calculation
         st.markdown("")
         st.markdown(
-            "<div style='color:#e2e8f0;font-weight:700;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+            "<div style='color:#e2e8f0;font-weight:700;' style=\"\1\">"
             "🗺️&ensp;Tổng Quan Khu Vực Hàng Hải Nam Á</div>",
             unsafe_allow_html=True,
         )
@@ -1595,7 +1595,7 @@ def app_optimizer():
         # ── Graph topology preview ──
         st.markdown("")
         st.markdown(
-            "<div style='color:#e2e8f0;font-weight:700;' style="font-size: 1.5em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">"
+            "<div style='color:#e2e8f0;font-weight:700;' style=\"\1\">"
             "🔗&ensp;Cấu Trúc Đồ Thị Tuyến Đường</div>",
             unsafe_allow_html=True,
         )
