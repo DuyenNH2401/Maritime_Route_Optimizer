@@ -950,7 +950,8 @@ def render_map(
     sea_map = folium.Map(
         location=[5.5, 106.0],
         zoom_start=6,
-        tiles="CartoDB dark_matter",
+        tiles="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+        attr="Google",
         control_scale=True,
     )
 
