@@ -1126,7 +1126,8 @@ def app_home():
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 20px;
-            line-height: 1.1;
+            line-height: 1.3;
+            padding: 10px 0;
         }
         .home-subtitle {
             font-size: 1.25rem;
