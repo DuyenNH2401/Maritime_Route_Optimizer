@@ -971,14 +971,8 @@ with st.sidebar:
             step=1_000,
             help="Total weight of cargo in metric tons.",
         )
-        vessel_length = st.number_input(
-            "Vessel / Cargo Length (m)",
-            min_value=30,
-            max_value=400,
-            value=180,
-            step=10,
-            help="Length overall (LOA) of the vessel in meters.",
-        )
+        vessel_length = 180
+
         cargo_type = st.selectbox(
             "Cargo Type",
             list(CARGO_RISK_MULTIPLIERS.keys()),
