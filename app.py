@@ -1169,7 +1169,9 @@ def app_home():
         
         <div class="home-container">
             <div class="home-title">Maritime Route Intelligence</div>
-            <p class="home-subtitle"
+            <p class="home-subtitle">
+                Hệ thống Tối ưu hóa Tuyến đường biển thông minh. 
+                Cân bằng giữa chi phí vận tải, rủi ro an ninh, và điều kiện thời tiết khắc nghiệt trên khu vực Biển&nbsp;Đông&nbsp;-&nbsp;Đông&nbsp;Nam&nbsp;Á.
             </p>
         </div>
     ''', unsafe_allow_html=True)
@@ -1484,11 +1486,11 @@ def app_optimizer():
             exp1, exp2 = st.columns(2)
             with exp1:
                 df_safe = pd.DataFrame(safest_route.segment_details)
-                csv_safe = df_safe.to_csv(index=False).encode("utf-8")
+                csv_safe = df_safe.to_csv(index=False).encode("utf-8-sig")
                 st.download_button("⬇️ Tải xuống dữ liệu T.Đường An Toàn (CSV)", csv_safe, "safest_route.csv", "text/csv", use_container_width=True)
             with exp2:
                 df_short = pd.DataFrame(shortest_route.segment_details)
-                csv_short = df_short.to_csv(index=False).encode("utf-8")
+                csv_short = df_short.to_csv(index=False).encode("utf-8-sig")
                 st.download_button("⬇️ Tải xuống dữ liệu T.Đường Ngắn Nhất (CSV)", csv_short, "shortest_route.csv", "text/csv", use_container_width=True)
 
         with tab_news:
