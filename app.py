@@ -651,7 +651,9 @@ RSS_FEEDS = {
     "weather": [
         "https://www.weather.gov.sg/files/rss/rss24HrForecast.xml",
         "https://www.weather.gov.sg/files/rss/rssHeavyRain_new.xml",
-        "https://www.metoc.navy.mil/jtwc/rss/jtwc.rss"
+        "https://www.metoc.navy.mil/jtwc/rss/jtwc.rss",
+        "https://gcaptain.com/feed/",
+        "https://vtv.vn/trong-nuoc.rss"
     ],
     "security": [
         "https://www.crisisgroup.org/rss/asia.xml",
@@ -661,12 +663,13 @@ RSS_FEEDS = {
     ],
     "logistics": [
         "https://vneconomy.vn/the-gioi.rss",
-        "https://theloadstar.com/feed/"
+        "https://theloadstar.com/feed/",
+        "https://www.maritime-executive.com/news/rss"
     ]
 }
 
-@st.cache_data(ttl=3600, show_spinner=False)
-def fetch_rss_feed(url: str, max_items=5) -> List[Dict]:
+@st.cache_data(ttl=60, show_spinner=False)
+def fetch_rss_feed(url: str, max_items=3) -> List[Dict]:
     SEA_KEYWORDS = [
         "asia", "châu á", "đông nam á", "vietnam", "việt nam", "viet nam",
         "singapore", "malaysia", "indonesia", "philippine", "thailand", "thái lan",
@@ -697,11 +700,20 @@ def fetch_rss_feed(url: str, max_items=5) -> List[Dict]:
             title_lower = entry.title.lower()
             desc_lower = entry.get("description", "").lower()
             
+            # --- FIX: Handle broken S3 links in Navy JTWC feeds ---
+            # Many jtwc.rss entries point to s3.amazonaws.com/www.metoc.navy.mil/... which is private.
+            # We redirect them to the main public domain.
+            final_link = entry.link
+            if "amazonaws.com/www.metoc.navy.mil" in final_link:
+                # Catch s3.amazonaws.com/www.metoc.navy.mil or other subdomains
+                import re
+                final_link = re.sub(r'https?://[^/]*amazonaws\.com/www\.metoc\.navy\.mil/', 'https://www.metoc.navy.mil/', final_link)
+            
             # Khí tượng Singapore/Mỹ mặc định chấp nhận, tin tức khác phải có từ khóa SEA
             if is_weather_feed or any(kw in title_lower or kw in desc_lower for kw in SEA_KEYWORDS):
                 results.append({
                     "title": entry.title,
-                    "link": entry.link,
+                    "link": final_link,
                     "source": source_name,
                     "date": entry.get("published", "")
                 })
@@ -713,8 +725,8 @@ def fetch_rss_feed(url: str, max_items=5) -> List[Dict]:
     except Exception as e:
         return []
 
-@st.cache_data(ttl=3600, show_spinner=False)
-def fetch_all_rss_category(category: str, max_items_per_feed=5) -> List[Dict]:
+@st.cache_data(ttl=60, show_spinner=False)
+def fetch_all_rss_category(category: str, max_items_per_feed=3) -> List[Dict]:
     urls = RSS_FEEDS.get(category, [])
     all_news = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
@@ -806,15 +818,16 @@ def build_maritime_graph(
 
     # Add edges
     for src, dst, dist_nm, risk in EDGES:
-        # Pure-distance graph
-        G_dist.add_edge(src, dst, weight=dist_nm, distance=dist_nm, risk_score=0)
-
-        # Risk-penalized graph
+        # Risk penalty (used for display on both graphs)
         risk_penalty = dist_nm * (
             risk.piracy * multipliers["piracy"]
             + risk.conflict * multipliers["conflict"]
             + risk.weather * multipliers["weather"]
         ) * vessel_factor
+
+        # Pure-distance graph (weight = distance only, but store real risk for display)
+        G_dist.add_edge(src, dst, weight=dist_nm, distance=dist_nm, risk_score=risk_penalty)
+
 
         combined_weight = dist_nm + risk_penalty
         G_risk.add_edge(
@@ -1170,6 +1183,8 @@ def app_home():
         <div class="home-container">
             <div class="home-title">Maritime Route Intelligence</div>
             <p class="home-subtitle">
+                Hệ thống Tối ưu hóa Tuyến đường biển thông minh. 
+                Cân bằng giữa chi phí vận tải, rủi ro an ninh, và điều kiện thời tiết khắc nghiệt trên khu vực Biển&nbsp;Đông&nbsp;-&nbsp;Đông&nbsp;Nam&nbsp;Á.
             </p>
         </div>
     ''', unsafe_allow_html=True)
@@ -1412,7 +1427,7 @@ def app_optimizer():
 
         with tab_map:
             st.markdown(
-                "<div style='color:#e2e8f0;font-weight:700;margin-bottom:2px;' style=\"\1\">"
+                "<div style='color:#e2e8f0;font-weight:700;margin-bottom:2px;' style=\"\\1\">"
                 "🗺️&ensp;Bản Đồ Tuyến Đường Tương Tác</div>",
                 unsafe_allow_html=True,
             )
@@ -1423,41 +1438,68 @@ def app_optimizer():
             st.markdown("</div>", unsafe_allow_html=True)
 
         with tab_compare:
-            col_safe, col_short = st.columns(2)
+            same_route = shortest_route.path == safest_route.path
 
-            with col_safe:
+            if same_route:
+                # ── Both routes are identical – show a single unified card ──
+                st.success(
+                    "✅ **Tuyến ngắn nhất và tuyến an toàn nhất trùng nhau!** "
+                    "Với các thông số hiện tại, không cần phải hi sinh khoảng cách để đổi lấy an toàn.",
+                    icon="🎯",
+                )
                 st.markdown(
                     '<div class="route-compare">'
-                    '<div style=\"\1\">🟢 Tuyến An Toàn Nhất Route</div>',
+                    '<div style=\"\\1\">🟢 Tuyến Tối Ưu (Ngắn Nhất & An Toàn Nhất)</div>',
                     unsafe_allow_html=True,
                 )
-                st.success(f"**Lộ trình:** {' → '.join(wp.name for wp in safest_route.waypoints)}", icon="🟢")
+                st.info(f"**Lộ trình:** {' → '.join(wp.name for wp in safest_route.waypoints)}", icon="🚢")
                 m1, m2, m3 = st.columns(3)
                 m1.metric("Khoảng Cách", f"{safest_route.total_distance:,.1f} nm")
                 m2.metric("Điểm Rủi Ro", f"{safest_route.total_risk_score:,.1f}")
-                eta_safe = safest_route.total_distance / 14
-                m3.metric("Thời Gian Ước Tính", f"{eta_safe:,.1f} giờ")
-                
-                with st.expander("📍 Xem Chi Tiết Từng Chặng", expanded=False):
+                eta = safest_route.total_distance / 14
+                m3.metric("Thời Gian Ước Tính", f"{eta:,.1f} giờ")
+
+                with st.expander("📍 Xem Chi Tiết Từng Chặng", expanded=True):
                     st.markdown(segment_table_html(safest_route.segment_details), unsafe_allow_html=True)
                 st.markdown("</div>", unsafe_allow_html=True)
 
-            with col_short:
-                st.markdown(
-                    '<div class="route-compare">'
-                    '<div style=\"\1\">🔴 Độ Dài Tuyến Ngắn Nhất Route</div>',
-                    unsafe_allow_html=True,
-                )
-                st.warning(f"**Lộ trình:** {' → '.join(wp.name for wp in shortest_route.waypoints)}", icon="🔴")
-                m1, m2, m3 = st.columns(3)
-                m1.metric("Khoảng Cách", f"{shortest_route.total_distance:,.1f} nm")
-                m2.metric("Điểm Rủi Ro", f"{shortest_risk_on_risk_graph:,.1f}")
-                eta_short = shortest_route.total_distance / 14
-                m3.metric("Thời Gian Ước Tính", f"{eta_short:,.1f} giờ")
-                
-                with st.expander("📍 Xem Chi Tiết Từng Chặng", expanded=False):
-                    st.markdown(segment_table_html(shortest_route.segment_details), unsafe_allow_html=True)
-                st.markdown("</div>", unsafe_allow_html=True)
+            else:
+                # ── Two different routes – show side-by-side comparison ──
+                col_safe, col_short = st.columns(2)
+
+                with col_safe:
+                    st.markdown(
+                        '<div class="route-compare">'
+                        '<div style=\"\\1\">🟢 Tuyến An Toàn Nhất</div>',
+                        unsafe_allow_html=True,
+                    )
+                    st.success(f"**Lộ trình:** {' → '.join(wp.name for wp in safest_route.waypoints)}", icon="🟢")
+                    m1, m2, m3 = st.columns(3)
+                    m1.metric("Khoảng Cách", f"{safest_route.total_distance:,.1f} nm")
+                    m2.metric("Điểm Rủi Ro", f"{safest_route.total_risk_score:,.1f}")
+                    eta_safe = safest_route.total_distance / 14
+                    m3.metric("Thời Gian Ước Tính", f"{eta_safe:,.1f} giờ")
+
+                    with st.expander("📍 Xem Chi Tiết Từng Chặng", expanded=False):
+                        st.markdown(segment_table_html(safest_route.segment_details), unsafe_allow_html=True)
+                    st.markdown("</div>", unsafe_allow_html=True)
+
+                with col_short:
+                    st.markdown(
+                        '<div class="route-compare">'
+                        '<div style=\"\\1\">🔴 Tuyến Ngắn Nhất</div>',
+                        unsafe_allow_html=True,
+                    )
+                    st.warning(f"**Lộ trình:** {' → '.join(wp.name for wp in shortest_route.waypoints)}", icon="🔴")
+                    m1, m2, m3 = st.columns(3)
+                    m1.metric("Khoảng Cách", f"{shortest_route.total_distance:,.1f} nm")
+                    m2.metric("Điểm Rủi Ro", f"{shortest_risk_on_risk_graph:,.1f}")
+                    eta_short = shortest_route.total_distance / 14
+                    m3.metric("Thời Gian Ước Tính", f"{eta_short:,.1f} giờ")
+
+                    with st.expander("📍 Xem Chi Tiết Từng Chặng", expanded=False):
+                        st.markdown(segment_table_html(shortest_route.segment_details), unsafe_allow_html=True)
+                    st.markdown("</div>", unsafe_allow_html=True)
 
         with tab_ai:
             same_route = shortest_route.path == safest_route.path
@@ -1505,8 +1547,8 @@ def app_optimizer():
             with nc1:
                 st.markdown("#### 🚨 An Ninh & Tranh Chấp")
                 st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
-                sec_news = fetch_all_rss_category("security", max_items_per_feed=5)
-                for item in sec_news[:5]:
+                sec_news = fetch_all_rss_category("security", max_items_per_feed=3)
+                for item in sec_news[:3]:
                     st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
                     st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
                 if not sec_news:
@@ -1516,8 +1558,8 @@ def app_optimizer():
             with nc2:
                 st.markdown("#### 🌪️ Cảnh Báo Thời Tiết")
                 st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
-                wea_news = fetch_all_rss_category("weather", max_items_per_feed=5)
-                for item in wea_news[:5]:
+                wea_news = fetch_all_rss_category("weather", max_items_per_feed=3)
+                for item in wea_news[:3]:
                     st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
                     st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
                 if not wea_news:
@@ -1527,8 +1569,8 @@ def app_optimizer():
             with nc3:
                 st.markdown("#### 🚢 Cảng & Kinh Tế")
                 st.markdown("<hr style='margin: 0.5em 0;'>", unsafe_allow_html=True)
-                eco_news = fetch_all_rss_category("logistics", max_items_per_feed=5)
-                for item in eco_news[:5]:
+                eco_news = fetch_all_rss_category("logistics", max_items_per_feed=3)
+                for item in eco_news[:3]:
                     st.markdown(f"• **[{item['title']}]({item['link']})**<br><span style='color:gray;font-size:0.85em'>🏢 {item['source']}</span>", unsafe_allow_html=True)
                     st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
                 if not eco_news:
