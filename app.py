@@ -1397,7 +1397,7 @@ def app_optimizer():
             )
         with k2:
             st.metric(
-                label="🛡️ Điểm Rủi Ro Hấp Nhất", 
+                label="🛡️ Điểm Rủi Ro Thấp Nhất", 
                 value=f"{safest_route.total_risk_score:,.0f}",
                 delta=f"- {risk_diff:,.0f} điểm rủi ro",
                 delta_color="normal"
